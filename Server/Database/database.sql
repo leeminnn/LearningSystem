@@ -69,17 +69,26 @@ CREATE TABLE IF NOT EXISTS course.pending_enrolment (
 
 CREATE DATABASE IF NOT EXISTS employee;
 
-
 -- add in heree
 CREATE TABLE IF NOT EXISTS employee.employee (
   emp_id int NOT NULL PRIMARY KEY,
   emp_name VARCHAR (255) NOT NULL,
   email VARCHAR (255) NOT NULL,
   phone int(8) NOT NULL,
-  position VARCHAR (255) NOT NULL,
-  dept VARCHAR (255) NOT NULL,
-  course_complete VARCHAR (255) NOT NULL,
-  badge VARCHAR (255) NOT NULL
+  dept VARCHAR (255) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS employee.learner (
+  emp_id int NOT NULL PRIMARY KEY,
+  courses_completed VARCHAR (255) NOT NULL,
+  badge VARCHAR (255) NOT NULL,
+  CONSTRAINT learner_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
+)
+
+CREATE TABLE IF NOT EXISTS employee.trainer (
+  emp_id int NOT NULL PRIMARY KEY,
+  courses_teaching VARCHAR (255) NOT NULL,
+  CONSTRAINT trainer_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
+)
 
 DROP DATABASE IF EXISTS learningsystem;
