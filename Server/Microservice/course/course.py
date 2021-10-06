@@ -17,6 +17,7 @@ mysql.init_app(app)
 
 
 ## learner want to enroll to the course ##
+#as a learner, want to enroll to the course that I am interested..
 @app.route('/enrol', methods=['POST'])
 def enrol():
 
@@ -101,6 +102,33 @@ def remove_course():
     cur.close()
 
     return("Success"), 202
+
+
+#as a leaner & trainer, able to view course progress 
+@app.route("/leaner_progress", methods=['GET'])
+def learner_progresss():
+
+    emp = request.json['emp_id']
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM course.learner_list WHERE emp_id=%s""", [emp])
+    result = cur.fetchall()
+
+    return jsonify(result), 204
+
+
+#as a leaner, view course outline and description 
+#as leaner, view course materials
+@app.route("/course_info", methods=['GET'])
+def course_info():
+
+    course_id = request.json['course_id']
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM course WHERE course_id=%s""", [course_id])
+    result = cur.fetchall()
+
+    return jsonify(result), 205
 
 
 if __name__ == "__main__":
