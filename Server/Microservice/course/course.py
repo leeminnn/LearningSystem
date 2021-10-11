@@ -85,7 +85,6 @@ def add_course():
 
     return("Success"), 201
 
-
 @app.route('/remove', methods=['DELETE'])
 def remove_course():
 
@@ -101,6 +100,83 @@ def remove_course():
     cur.close()
 
     return("Success"), 202
+
+#Kelly
+#enroll engineer 
+@app.route('/enroll_engineer', methods=['POST'])
+def enroll_engineer():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
+    status = request.json['status']
+    #status can be approve or not approve
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO PENDING_ENROLMENT(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
+                (emp_id, course_id, class_id, status))
+
+    conn.commit()
+    cur.close()
+
+    return("Success"), 201
+
+#Learner to view selected course during certain period 
+@app.route("/course/<int:emp>", methods=['GET'])
+def get_one(date):
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM course WHERE date=%s BETWEEN start_date AND end_date""", [date])
+    result = cur.fetchall()
+
+    return jsonify(result), 203
+
+#update learner's or trainer's class_list status to withdraw or completed: 
+@app.route('/update_learner_status', methods=['PUT'])
+def update_class():
+
+    if not request.json:
+        return ("Invalid body request."),400
+
+    status = request.json['status']
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE FROM class_list SET status = %s) 
+                WHERE emp_id = %s """,
+                (status, emp_id))
+
+    conn.commit()
+    cur.close()
+
+    return("Success"), 201
+
+#approve learner enrolment
+@app.route('/approve_learner', methods=['PUT'])
+def approve_learner():
+
+    if not request.json:
+        return ("Invalid body request."),400
+
+    status = request.json['status']
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE FROM pending_enrolment SET status = %s) 
+                WHERE emp_id = %s """,
+                (status, emp_id))
+
+    conn.commit()
+    cur.close()
+
+    return("Success"), 201
 
 
 if __name__ == "__main__":
