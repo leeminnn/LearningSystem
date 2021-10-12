@@ -138,51 +138,6 @@ def enrol():
 
 
 
-
-    ## learner want to enroll to the course ##
-#as a learner, want to enroll to the course that I am interested..
-@app.route('/enrol', methods=['POST'])
-def enrol():
-
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    # request --> getting data that is being sent over
-    # json --> convert file to json format
-    emp_id = request.json['emp_id']
-    course_id = request.json['course_id']
-    class_id = request.json['class_id']
-    status = request.json['status']
-
-    # connect to sql
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    # SQL command
-    cur.execute("INSERT INTO course.pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
-                (emp_id, course_id, class_id, status))
-
-    # commit the command
-    conn.commit()
-
-    # close sql connection
-    cur.close()
-
-    return("Success"), 201
-
-
-@app.route("/all_courses", methods=['GET'])
-def all_courses():
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM COURSE")
-    result = cur.fetchall()
-
-    return jsonify(result), 203
-
-
 @app.route('/add_course', methods=['POST'])
 def add_course():
 
