@@ -124,19 +124,19 @@ def enroll_engineer():
     return("Success"), 201
 
 #Learner to view selected course during certain period 
-@app.route("/course/<date>", methods=['GET'])
+@app.route("/course/<string:date>", methods=['GET'])
 def get_one(date):
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM course.course WHERE date=%s BETWEEN start_date AND end_date""", [date])
+    cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
     result = cur.fetchall()
 
     return jsonify(result), 203
 
 #update learner's or trainer's class_list status to withdraw or completed: 
-@app.route('/update_learner_status', methods=['PUT'])
-def update_class():
+@app.route('/update_status', methods=['PUT'])
+def update_status():
 
     if not request.json:
         return ("Invalid body request."),400
@@ -146,7 +146,7 @@ def update_class():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE FROM class_list SET status = %s) 
+    cur.execute("""UPDATE course.class_list SET status = %s
                 WHERE emp_id = %s """,
                 (status, emp_id))
 
@@ -156,17 +156,20 @@ def update_class():
     return("Success"), 201
 
 #approve learner enrolment
-@app.route('/approve_learner', methods=['UPDATE'])
+@app.route('/approve_learner', methods=['PUT'])
 def approve_learner():
 
     if not request.json:
         return("Invalid body request."), 400
 
     status = request.json['status']
+    emp_id = request.json['emp_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("UPDATE STATUS FROM PENDING_ENROLMENT WHERE EMP_ID=%s", [course_id])
+    cur.execute("""UPDATE course.pending_enrolment SET status = %s
+                WHERE emp_id = %s """,
+                (status, emp_id))
     conn.commit()
     cur.close()
 
