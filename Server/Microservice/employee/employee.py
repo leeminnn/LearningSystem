@@ -52,6 +52,54 @@ def get_one():
 
     return ("Success"), 203
 
+@app.route('/update_employee', methods=['PUT']) 
+def update_employee():
+    #check for body request
+    if not request.json:
+        return ("Invalid body request."),400
+
+    emp_id = request.json['emp_id']
+    emp_name = request.json['emp_name']
+    email = request.json['email']
+    phone = request.json['phone']
+    dept = request.json['dept']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE course.course SET emp_name = %s, email = %s , phone =%s, dept=%s
+                WHERE emp_id = %s """,
+                (emp_name, email, phone, dept,emp_id))
+
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully Update employee information"), 201
+
+@app.route('/add_employee', methods=['POST']) 
+def add_employee():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    emp_name = request.json['emp_name']
+    email = request.json['email']
+    phone = request.json['phone']
+    dept = request.json['dept']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""INSERT INTO course.class(emp_id,emp_name,email,phone,dept) VALUES (%s, %s, %s, %s, %s)""",
+                (emp_id,emp_name,email,phone,dept))    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully added employee"), 201
 
 
 if __name__ == "__main__":
