@@ -85,8 +85,52 @@ def add_course():
 
     return("Success"), 201
 
+<<<<<<< Updated upstream
 @app.route('/remove', methods=['DELETE'])
 def remove_course():
+=======
+# ----Kelly----
+@app.route('/enroll_engineer', methods=['POST'])
+def enroll_engineer():
+
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
+    status = request.json ['status']
+    #status can be approve/ unapprove 
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO PENDING_ENROLMENT(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
+                (emp_id, course_id, class_id, status))
+
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Success"), 201
+
+# selecting selected courses that learner can view during a certain period 
+@app.route("/employee/<int:emp>", methods=['GET'])
+def get_date(date):
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM course WHERE date=%s BETWEEN start_date AND end_date""", [date])
+    result = cur.fetchall()
+
+    return jsonify(result), 203
+
+
+@app.route('/remove_trainer', methods=['UPDATE'])
+def remove_trainer():
+>>>>>>> Stashed changes
 
     if not request.json:
         return("Invalid body request."), 400
@@ -95,7 +139,24 @@ def remove_course():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("DELETE FROM COURSE WHERE course_id=%s", [course_id])
+    cur.execute("UPDATE FROM CLASS_LIST WHERE course_id=%s", [course_id])
+    conn.commit()
+    cur.close()
+
+    return("Success"), 202
+
+# update learner's class_list status to withdraw or completed 
+@app.route('/remove_learner', methods=['UPDATE'])
+def remove_learner():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    status = request.json['status']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("UPDATE class_list WHERE status=%s", [status])
     conn.commit()
     cur.close()
 
@@ -179,5 +240,21 @@ def approve_learner():
     return("Success"), 201
 
 
+@app.route('/approve_learner', methods=['UPDATE'])
+def approve_learner():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    status = request.json['status']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("UPDATE STATUS FROM PENDING_ENROLMENT WHERE EMP_ID=%s", [course_id])
+    conn.commit()
+    cur.close()
+
+    return("Success"), 202
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
+
