@@ -17,7 +17,7 @@ mysql.init_app(app)
 
 
 ## learner want to enroll to the course ##
-@app.route('/enrol', methods=['POST'])
+@app.route('/self_enrol', methods=['POST'])
 def enrol():
 
     # check for body request
@@ -36,7 +36,7 @@ def enrol():
     cur = conn.cursor()
 
     # SQL command
-    cur.execute("INSERT INTO course.pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
+    cur.execute("INSERT INTO pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
                 (emp_id, course_id, class_id, status))
 
     # commit the command
@@ -55,7 +55,6 @@ def all_courses():
     cur = conn.cursor()
     cur.execute("SELECT * FROM COURSE")
     result = cur.fetchall()
-
     return jsonify(result), 203
 
 
@@ -116,7 +115,7 @@ def enroll_engineer():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("INSERT INTO PENDING_ENROLMENT(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
+    cur.execute("INSERT INTO course.pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
                 (emp_id, course_id, class_id, status))
 
     conn.commit()
@@ -125,12 +124,12 @@ def enroll_engineer():
     return("Success"), 201
 
 #Learner to view selected course during certain period 
-@app.route("/course/<int:emp>", methods=['GET'])
+@app.route("/course/<date>", methods=['GET'])
 def get_one(date):
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM course WHERE date=%s BETWEEN start_date AND end_date""", [date])
+    cur.execute("""SELECT * FROM course.course WHERE date=%s BETWEEN start_date AND end_date""", [date])
     result = cur.fetchall()
 
     return jsonify(result), 203
