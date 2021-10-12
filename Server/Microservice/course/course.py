@@ -110,8 +110,7 @@ def enroll_engineer():
     emp_id = request.json['emp_id']
     course_id = request.json['course_id']
     class_id = request.json['class_id']
-    status = request.json['status']
-    #status can be approve or not approve
+    status = 'approve'
 
     conn = mysql.connect()
     cur = conn.cursor()
