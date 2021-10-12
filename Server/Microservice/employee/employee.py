@@ -18,24 +18,40 @@ mysql.init_app(app)
 
 @app.route("/employee", methods=['GET'])
 def get_all():
+            # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
 
     conn = mysql.connect()
     cur = conn.cursor()
     cur.execute("""SELECT * FROM employee""")
     result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
 
     return jsonify(result), 203
 
 
-@app.route("/employee/<int:emp>", methods=['GET'])
-def get_one(emp):
+@app.route("/get_one", methods=['GET'])
+def get_one():
+                # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp = request.json['emp_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM employee WHERE emp_id=%s""", [emp])
-    result = cur.fetchall()
 
-    return jsonify(result), 203
+    cur.execute("""SELECT * FROM employee WHERE emp_id=%s""", (emp))
+
+    conn.commit()
+    cur.close()
+
+
+    return ("Success"), 203
+
 
 
 if __name__ == "__main__":
