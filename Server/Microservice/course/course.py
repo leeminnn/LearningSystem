@@ -84,7 +84,22 @@ def add_course():
     cur.close()
 
     return("Success"), 201
+    
+@app.route('/remove', methods=['DELETE'])
+def remove_course():
 
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM COURSE WHERE course_id=%s", (course_id))
+    conn.commit()
+    cur.close()
+
+    return("Success"), 202
 #Kelly
 #enroll engineer 
 @app.route('/enroll_engineer', methods=['POST'])
