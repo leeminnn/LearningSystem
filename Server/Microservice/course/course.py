@@ -155,7 +155,7 @@ def add_course():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("INSERT INTO COURSE(course_id, course_name, start_date,end_date,pre_requisite) VALUES (%s, %s, %s, %s, %s)",
+    cur.execute("INSERT INTO course.course(course_id, course_name, start_date,end_date,pre_requisite) VALUES (%s, %s, %s, %s, %s)",
                 (course_id, course_name, start_date, end_date, pre_requisite))
 
     # commit the command
@@ -176,12 +176,12 @@ def remove_course():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("DELETE FROM COURSE WHERE course_id=%s", (course_id))
+    cur.execute("DELETE FROM course.course WHERE course_id=%s", (course_id))
     conn.commit()
     cur.close()
 
     return("Success"), 202
-#Kelly
+
 #enroll engineer 
 @app.route('/enroll_engineer', methods=['POST'])
 def enroll_engineer():
@@ -192,8 +192,7 @@ def enroll_engineer():
     emp_id = request.json['emp_id']
     course_id = request.json['course_id']
     class_id = request.json['class_id']
-    status = request.json['status']
-    #status can be approve or not approve
+    status = 'approve'
 
     conn = mysql.connect()
     cur = conn.cursor()
