@@ -24,7 +24,7 @@ def get_all():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM employee""")
+    cur.execute("""SELECT * FROM employee.employee""")
     result = cur.fetchall()
     conn.commit()
     cur.close()
@@ -44,7 +44,7 @@ def get_one():
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""SELECT * FROM employee WHERE emp_id=%s""", (emp))
+    cur.execute("""SELECT * FROM employee.employee WHERE emp_id=%s""", (emp))
 
     conn.commit()
     cur.close()
@@ -66,7 +66,7 @@ def update_employee():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE course.course SET emp_name = %s, email = %s , phone =%s, dept=%s
+    cur.execute("""UPDATE employee.employee SET emp_name = %s, email = %s , phone =%s, dept=%s
                 WHERE emp_id = %s """,
                 (emp_name, email, phone, dept,emp_id))
 
@@ -92,7 +92,7 @@ def add_employee():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""INSERT INTO course.class(emp_id,emp_name,email,phone,dept) VALUES (%s, %s, %s, %s, %s)""",
+    cur.execute("""INSERT INTO employee.employee(emp_id,emp_name,email,phone,dept) VALUES (%s, %s, %s, %s, %s)""",
                 (emp_id,emp_name,email,phone,dept))    # commit the command
     conn.commit()
 
@@ -100,7 +100,6 @@ def add_employee():
     cur.close()
 
     return("Successfully added employee"), 201
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
