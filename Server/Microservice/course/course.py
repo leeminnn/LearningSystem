@@ -269,10 +269,9 @@ def learner_progresss():
 
     cur.execute("SELECT * FROM course.class_list WHERE emp_id=%s", (emp))
 
-    conn.commit()
-    cur.close()
+    result = cur.fetchall()
 
-    return ("Success"), 205
+    return jsonify(result), 203
 
 
 #as a learner, view course outline and description
@@ -289,30 +288,9 @@ def course_info():
 
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
-    conn.commit()
-    cur.close()
+    result = cur.fetchall()
 
-    return ("Success"), 205
-
-#as learner, view course materials
-@app.route("/course_materials", methods=['GET'])
-def course_materials():
-        # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM course.course WHERE course_id=%s",(course_id))
-
-    conn.commit()
-    cur.close()
-
-    return ("Success"), 205
-
+    return jsonify(result), 203
 
 
 if __name__ == "__main__":
