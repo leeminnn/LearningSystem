@@ -155,60 +155,6 @@ def remove_course():
 
     return("Success"), 202
 
-#Learner to view selected course during certain period 
-@app.route("/view_available_course/<string:date>", methods=['GET'])
-def get_one(date):
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
-    result = cur.fetchall()
-
-    return jsonify(result), 203
-
-
-#Learner to view selected course during certain period 
-@app.route("/view_available_course/<string:date>", methods=['GET'])
-def get_one(date):
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
-    result = cur.fetchall()
-
-    return jsonify(result), 203
-
-#update learner's or trainer's class_list status to withdraw or completed: 
-@app.route('/update_status', methods=['PUT'])
-def update_status():
-
-    if not request.json:
-        return ("Invalid body request."),400
-
-    status = request.json['status']
-    emp_id = request.json['emp_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""UPDATE course.class_list SET status = %s
-                WHERE emp_id = %s """,
-                (status, emp_id))
-
-    conn.commit()
-    cur.close()
-
-    return("Success"), 201
-
-#approve learner enrolment
-@app.route('/approve_learner', methods=['PUT'])
-def approve_learner():
-
-    if not request.json:
-        return("Invalid body request."), 400
-
-    status = request.json['status']
-    emp_id = request.json['emp_id']
-
 
 #approve learner enrolment
 @app.route('/approve_learner', methods=['PUT'])
