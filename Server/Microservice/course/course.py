@@ -125,7 +125,9 @@ def enrol():
     cur = conn.cursor()
 
     # SQL command
+
     cur.execute("""INSERT INTO course.pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)""",
+
                 (emp_id, course_id, class_id, status))
 
     # commit the command
@@ -136,35 +138,7 @@ def enrol():
 
     return("Successfully Pending Enroll"), 201
 
-
-
-@app.route('/add_course', methods=['POST'])
-def add_course():
-
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-    course_name = request.json['course_name']
-    start_date = request.json['start_date']
-    end_date = request.json['end_date']
-    pre_requisite = request.json['pre_requisite']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO COURSE(course_id, course_name, start_date,end_date,pre_requisite) VALUES (%s, %s, %s, %s, %s)",
-                (course_id, course_name, start_date, end_date, pre_requisite))
-
-    # commit the command
-    conn.commit()
-    # close sql connection
-    cur.close()
-
-
-    return("Success"), 201
-
-
+    
 @app.route('/remove', methods=['DELETE'])
 def remove_course():
 
@@ -175,13 +149,73 @@ def remove_course():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("DELETE FROM COURSE WHERE course_id=%s", (course_id))
+    cur.execute("DELETE FROM course.course WHERE course_id=%s", (course_id))
     conn.commit()
     cur.close()
 
     return("Success"), 202
 
+#Learner to view selected course during certain period 
+@app.route("/view_available_course/<string:date>", methods=['GET'])
+def get_one():
+                # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
 
+    date = request.json["date"]
+    
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
+
+#update learner's or trainer's class_list status to withdraw or completed: 
+@app.route('/update_status', methods=['PUT'])
+def update_status():
+
+    if not request.json:
+        return ("Invalid body request."),400
+
+    status = request.json['status']
+    emp_id = request.json['emp_id']
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE course.class_list SET status = %s, course_id = %s, class_id = %s
+                WHERE emp_id = %s """,(status, emp_id, course_id, class_id))
+    
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+    return jsonify(result), 203
+
+#approve learner enrolment
+@app.route('/approve_learner', methods=['PUT'])
+def approve_learner():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    status = request.json['status']
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE course.pending_enrolment SET status = %s
+                WHERE emp_id = %s """,
+                (status, emp_id))
+    conn.commit()
+    cur.close()
+    return("Success"), 202
+  
 #as a learner & trainer, able to view course progress 
 @app.route("/learner_progress", methods=['GET'])
 def learner_progresss():
@@ -196,10 +230,9 @@ def learner_progresss():
 
     cur.execute("SELECT * FROM course.class_list WHERE emp_id=%s", (emp))
 
-    conn.commit()
-    cur.close()
+    result = cur.fetchall()
 
-    return ("Success"), 205
+    return jsonify(result), 203
 
 
 #as a learner, view course outline and description
@@ -216,29 +249,9 @@ def course_info():
 
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
-    conn.commit()
-    cur.close()
+    result = cur.fetchall()
 
-    return ("Success"), 205
-
-#as learner, view course materials
-@app.route("/course_materials", methods=['GET'])
-def course_materials():
-        # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM course.course WHERE course_id=%s",(course_id))
-
-    conn.commit()
-    cur.close()
-
-    return ("Success"), 205
+    return jsonify(result), 203
 
 
 # get eligible courses - compare pre-req 
@@ -303,3 +316,4 @@ def ineligible_courses():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
+
