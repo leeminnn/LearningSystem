@@ -15,16 +15,68 @@ app.config['MYSQL_DATABASE_DB'] = 'employee'
 mysql = MySQL(app, cursorclass=DictCursor)
 mysql.init_app(app)
 
-
-@app.route("/employee", methods=['GET'])
-def get_all():
-            # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
+#get list all employees
+@app.route("/all_employee", methods=['GET']) 
+def all_employee():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM employee""")
+    cur.execute("""SELECT * FROM employee.employee""")
+    result = cur.fetchall()
+
+    return jsonify(result), 203
+
+#get all information of 1 employee
+@app.route("/get_one", methods=['GET'])
+def get_one():
+                # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT * FROM employee.employee WHERE emp_id=%s""", (emp_id))
+
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
+
+#get employee name when type id
+@app.route("/get_emp_name", methods=['GET'])
+def get_emp_name():
+                # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT emp_id,emp_name FROM employee.employee WHERE emp_id=%s""", (emp_id))
+
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
+
+#get all trainers id name
+@app.route("/get_trainers", methods=['GET'])
+def get_trainers():
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT emp_id,emp_name FROM employee.trainer""")
+
     result = cur.fetchall()
     conn.commit()
     cur.close()
@@ -33,25 +85,7 @@ def get_all():
     return jsonify(result), 203
 
 
-@app.route("/get_one", methods=['GET'])
-def get_one():
-                # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    emp = request.json['emp_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("""SELECT * FROM employee WHERE emp_id=%s""", (emp))
-
-    conn.commit()
-    cur.close()
-
-
-    return ("Success"), 203
-
+#update employee information
 @app.route('/update_employee', methods=['PUT']) 
 def update_employee():
     #check for body request
@@ -66,7 +100,7 @@ def update_employee():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE course.course SET emp_name = %s, email = %s , phone =%s, dept=%s
+    cur.execute("""UPDATE employee.employee SET emp_name = %s, email = %s , phone =%s, dept=%s
                 WHERE emp_id = %s """,
                 (emp_name, email, phone, dept,emp_id))
 
@@ -78,6 +112,7 @@ def update_employee():
 
     return("Successfully Update employee information"), 201
 
+#add new employee
 @app.route('/add_employee', methods=['POST']) 
 def add_employee():
     #check for body request
@@ -92,8 +127,9 @@ def add_employee():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""INSERT INTO course.class(emp_id,emp_name,email,phone,dept) VALUES (%s, %s, %s, %s, %s)""",
-                (emp_id,emp_name,email,phone,dept))    # commit the command
+    cur.execute("""INSERT INTO employee.employee(emp_id,emp_name,email,phone,dept) VALUES (%s, %s, %s, %s, %s)""",
+                (emp_id,emp_name,email,phone,dept))    
+    # commit the command
     conn.commit()
 
     # close sql connection
@@ -101,6 +137,251 @@ def add_employee():
 
     return("Successfully added employee"), 201
 
+#insert new trainer
+@app.route('/add_trainer', methods=['POST']) 
+def add_trainer():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    emp_name = request.json['emp_name']
+    courses_teaching = request.json['courses_teaching']
+    courses_completed = request.json['courses_completed']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""INSERT INTO employee.trainer(emp_id,emp_name,courses_teaching,courses_completed) VALUES (%s, %s, %s, %s)""",
+                (emp_id,emp_name,courses_teaching,courses_completed))    
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+    return("Successfully add new trainer"), 201
+
+#update trainer courses teaching
+@app.route('/update_trainer_teaching', methods=['PUT']) 
+def update_trainer_teaching():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    courses_teaching = request.json['courses_teaching']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE employee.trainer SET courses_teaching = %s
+                WHERE emp_id = %s """,
+                (courses_teaching,emp_id)) 
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully update courses teaching"), 201
+
+#update trainer courses completed
+@app.route('/update_trainer_completed', methods=['PUT']) 
+def update_trainer_completed():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    courses_completed = request.json['courses_completed']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE employee.trainer SET courses_completed = %s
+                WHERE emp_id = %s """,
+                (courses_completed,emp_id)) 
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully update courses completed"), 201
+
+#insert new learner
+@app.route('/add_learner', methods=['POST']) 
+def add_learner():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    emp_name = request.json['emp_name']
+    courses_ongoing = request.json['courses_ongoing']
+    courses_completed = request.json['courses_completed']
+    badge=request.json['badge']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""INSERT INTO employee.learner(emp_id,emp_name,courses_ongoing,courses_completed,badge) VALUES (%s, %s, %s, %s,%s)""",
+                (emp_id,emp_name,courses_ongoing,courses_completed,badge))    
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+    return("Successfully add new learner"), 201
+
+#update learner courses_ongoing
+@app.route('/update_learner_ongoing', methods=['PUT']) 
+def update_learner_ongoing():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    courses_ongoing = request.json['courses_ongoing']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE employee.learner SET courses_ongoing = %s
+                WHERE emp_id = %s """,
+                (courses_ongoing,emp_id)) 
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully update ongoing courses"), 201
+
+#update learner courses_completed
+@app.route('/update_learner_completed', methods=['PUT']) 
+def update_learner_completed():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    courses_completed = request.json['courses_completed']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE employee.learner SET courses_completed = %s
+                WHERE emp_id = %s """,
+                (courses_completed,emp_id)) 
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully update completed courses"), 201
+
+#update learner courses_badge
+@app.route('/update_learner_badge', methods=['PUT']) 
+def update_learner_badge():
+    #check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    emp_id = request.json['emp_id']
+    badge = request.json['badge']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE employee.learner SET badge = %s
+                WHERE emp_id = %s """,
+                (badge,emp_id)) 
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("Successfully update learner badge"), 201
+
+#get trainer courses teaching
+@app.route("/get_courses_teaching", methods=['GET'])
+def get_courses_teaching():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT courses_teaching FROM employee.trainer where emp_id=%s""",(emp_id))
+
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
+
+#get trainer completed courses
+@app.route("/get_trainer_courses_completed", methods=['GET'])
+def get_trainer_courses_completed():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT courses_completed FROM employee.trainer where emp_id=%s""",(emp_id))
+
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
+
+#get learner ongoing courses
+@app.route("/get_courses_ongoing", methods=['GET'])
+def get_courses_ongoing():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT courses_ongoing FROM employee.learner where emp_id=%s""",(emp_id))
+
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
+
+#get learner completed courses
+@app.route("/get_learner_courses_completed", methods=['GET'])
+def get_learner_courses_completed():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT courses_completed FROM employee.learner where emp_id=%s""",(emp_id))
+
+    result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(result), 203
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
