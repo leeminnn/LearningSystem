@@ -163,7 +163,6 @@ def get_one():
         return("Invalid body request."), 400
 
     date = request.json["date"]
-    
     conn = mysql.connect()
     cur = conn.cursor()
     cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
@@ -173,6 +172,9 @@ def get_one():
 
 
     return jsonify(result), 203
+
+
+
 
 #update learner's or trainer's class_list status to withdraw or completed: 
 @app.route('/update_status', methods=['PUT'])
@@ -190,6 +192,7 @@ def update_status():
     cur = conn.cursor()
     cur.execute("""UPDATE course.class_list SET status = %s, course_id = %s, class_id = %s
                 WHERE emp_id = %s """,(status, emp_id, course_id, class_id))
+    
     result = cur.fetchall()
     conn.commit()
     cur.close()
