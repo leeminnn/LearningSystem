@@ -139,32 +139,6 @@ def enrol():
 
     return("Successfully Pending Enroll"), 201
 
-
-@app.route('/add_course', methods=['POST'])
-def add_course():
-
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-    course_name = request.json['course_name']
-    start_date = request.json['start_date']
-    end_date = request.json['end_date']
-    pre_requisite = request.json['pre_requisite']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO course.course(course_id, course_name, start_date,end_date,pre_requisite) VALUES (%s, %s, %s, %s, %s)",
-                (course_id, course_name, start_date, end_date, pre_requisite))
-
-    # commit the command
-    conn.commit()
-    # close sql connection
-    cur.close()
-
-
-    return("Success"), 201
     
 @app.route('/remove', methods=['DELETE'])
 def remove_course():
