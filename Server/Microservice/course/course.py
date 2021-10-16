@@ -249,13 +249,16 @@ def get_inprogress_course(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id",progress
-                FROM course.course AS course 
-                INNER JOIN course.class AS class 
-                ON course.course_id = class.course_id
-                INNER JOIN course.class_list AS class_list
-                ON class.class_id = class_list.class_id
-                WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    # cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id"
+    #             FROM course.course AS course 
+    #             INNER JOIN course.class AS class 
+    #             ON course.course_id = class.course_id
+    #             INNER JOIN course.class_list AS class_list
+    #             ON class.class_id = class_list.class_id
+    #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
+
+    cur.execute("""SELECT * FROM course WHERE course_id IN %s""" ,[tuple(course_id)])
+
 
     result = cur.fetchall()
 
