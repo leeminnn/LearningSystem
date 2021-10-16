@@ -241,5 +241,65 @@ def course_materials():
     return ("Success"), 205
 
 
+# get eligible courses - compare pre-req 
+@app.route("/eligible_courses", methods=['GET'])
+def eligible_courses():
+        # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
+
+    result = cur.fetchall()
+
+    return jsonify(result), 203
+
+
+# Get list of pending approval based on course id and class id
+@app.route("/pending_approval", methods=['GET'])
+def pending_approval():
+        # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM course.pending_enrolment WHERE course_id=%s, class_id =%s", (course_id, class_id))
+
+    result = cur.fetchall()
+
+    return jsonify(result), 203
+
+
+
+# Get list of course_id of ineligible courses
+@app.route("/ineligible_courses", methods=['GET'])
+def ineligible_courses():
+        # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
+
+    result = cur.fetchall()
+
+    return jsonify(result), 203
+
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
