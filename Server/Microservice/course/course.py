@@ -163,8 +163,7 @@ def get_one(date):
     cur = conn.cursor()
     cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
     result = cur.fetchall()
-    conn.commit()
-    cur.close()
+
     return jsonify(result), 203
 
 #update learner's or trainer's class_list status to withdraw or completed: 
@@ -176,21 +175,17 @@ def update_status():
 
     status = request.json['status']
     emp_id = request.json['emp_id']
-    course_id = request.json['course_id']
-    class_id = request.json['class_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE course.class_list SET status = %s, course_id = %s, class_id = %s
+    cur.execute("""UPDATE course.class_list SET status = %s
                 WHERE emp_id = %s """,
-                (status, emp_id, course_id, class_id))
+                (status, emp_id))
 
-    result = cur.fetchall()
     conn.commit()
     cur.close()
 
-
-    return jsonify(result), 203
+    return("Success"), 201
 
 #approve learner enrolment
 @app.route('/approve_learner', methods=['PUT'])
@@ -233,65 +228,6 @@ def learner_progresss():
 #as a learner, view course outline and description
 @app.route("/course_info", methods=['GET'])
 def course_info():
-        # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
-
-    result = cur.fetchall()
-
-    return jsonify(result), 203
-
-
-# get eligible courses - compare pre-req 
-@app.route("/eligible_courses", methods=['GET'])
-def eligible_courses():
-        # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
-
-    result = cur.fetchall()
-
-    return jsonify(result), 203
-
-
-# Get list of pending approval based on course id and class id
-@app.route("/pending_approval", methods=['GET'])
-def pending_approval():
-        # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-    class_id = request.json['class_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM course.pending_enrolment WHERE course_id=%s, class_id =%s", (course_id, class_id))
-
-    result = cur.fetchall()
-
-    return jsonify(result), 203
-
-
-
-# Get list of course_id of ineligible courses
-@app.route("/ineligible_courses", methods=['GET'])
-def ineligible_courses():
         # check for body request
     if not request.json:
         return("Invalid body request."), 400
