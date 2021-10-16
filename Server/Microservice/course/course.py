@@ -106,7 +106,6 @@ def all_courses():
     return jsonify(result), 203
 
 ## learner want to enroll to the course ##
-
 @app.route('/enrol', methods=['POST']) 
 def enrol():
 
@@ -156,30 +155,8 @@ def remove_course():
 
     return("Success"), 202
 
-#enroll engineer 
-@app.route('/enroll_engineer', methods=['POST'])
-def enroll_engineer():
-
-    if not request.json:
-        return("Invalid body request."), 400
-
-    emp_id = request.json['emp_id']
-    course_id = request.json['course_id']
-    class_id = request.json['class_id']
-    status = 'approve'
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO course.pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)",
-                (emp_id, course_id, class_id, status))
-
-    conn.commit()
-    cur.close()
-
-    return("Success"), 201
-
 #Learner to view selected course during certain period 
-@app.route("/course/<string:date>", methods=['GET'])
+@app.route("/view_available_course/<string:date>", methods=['GET'])
 def get_one(date):
 
     conn = mysql.connect()
