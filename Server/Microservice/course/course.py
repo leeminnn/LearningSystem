@@ -26,14 +26,13 @@ def create_course():
 
     course_id = request.json['course_id']
     course_name = request.json['course_name']
-    start_date = request.json['start_date']
-    end_date = request.json['end_date']
-    pre_requisite = request.json['pre_requisite']
+    course_desc = request.json ['course_desc']
+    pre_req = request.json['pre_req']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""INSERT INTO course.course(course_id, course_name, start_date,end_date,pre_req) VALUES (%s, %s, %s, %s, %s)""",
-                (course_id, course_name, start_date, end_date, pre_requisite))
+    cur.execute("""INSERT INTO course.course(course_id, course_name, course_desc, pre_req) VALUES (%s, %s, %s, %s)""",
+                (course_id, course_name, course_desc, pre_req))
 
     # commit the command
     conn.commit()
@@ -50,16 +49,23 @@ def create_class():
     if not request.json:
         return("Invalid body request."), 400
     
-    course_id = request.json['course_id'];
     class_id = request.json['class_id'];
     class_name= request.json['class_name'];
     intake = request.json['intake'];
     emp_id = request.json['emp_id'];
+    emp_name = request.json['course_id'];
+    course_id = request.json['course_id'];
+    course_name = request.json['course_id'];
+    start_date = request.json['course_id'];
+    end_date = request.json['course_id'];
+    start_enrol = request.json['course_id'];
+    end_enrol = request.json['course_id'];
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""INSERT INTO course.class(class_id,class_name,intake,emp_id,course_id) VALUES (%s, %s, %s, %s, %s)""",
-                (class_id,class_name,intake,emp_id,course_id))    # commit the command
+    cur.execute("""INSERT INTO course.class(class_id,class_name,intake,emp_id, emp_name, course_id, course_name, start_date, end_date, start_enrol, end_enrol)
+     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                (class_id,class_name,intake,emp_id, emp_name, course_id, course_name, start_date, end_date, start_enrol, end_enrol))   
     conn.commit()
 
     # close sql connection
@@ -77,15 +83,14 @@ def update_class():
 
     course_id = request.json['course_id']
     course_name = request.json['course_name']
-    start_date = request.json['start_date']
-    end_date = request.json['end_date']
-    pre_requisite = request.json['pre_requisite']
+    course_desc = request.json ['course_desc']
+    pre_req = request.json['pre_requisite']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE course.course SET course_name = %s, start_date = %s , end_date =%s, pre_req=%s
+    cur.execute("""UPDATE course.course SET course_name = %s, course_desc = %s, pre_req=%s
                 WHERE course_id = %s """,
-                (course_name, start_date, end_date, pre_requisite,course_id))
+                (course_name, course_desc, pre_req, course_id))
 
     # commit the command
     conn.commit()
@@ -101,8 +106,8 @@ def all_courses():
     conn = mysql.connect()
     cur = conn.cursor()
     cur.execute("SELECT * FROM course.course")
-    result = cur.fetchall()
 
+    result = cur.fetchall()
     return jsonify(result), 203
 
 ## learner want to enroll to the course ##
@@ -116,9 +121,11 @@ def enrol():
     # request --> getting data that is being sent over
     # json --> convert file to json format
     emp_id = request.json['emp_id']
+    emp_name = request.json['emp_name']
     course_id = request.json['course_id']
+    course_name = request.json['course_id']
     class_id = request.json['class_id']
-    status = request.json['status']
+    pending_status = request.json['pending_status']
 
     # connect to sql
     conn = mysql.connect()
@@ -126,9 +133,9 @@ def enrol():
 
     # SQL command
 
-    cur.execute("""INSERT INTO course.pending_enrolment(emp_id, course_id, class_id, status) VALUES (%s, %s, %s, %s)""",
+    cur.execute("""INSERT INTO course.pending_enrolment(emp_id, emp_name, course_id, course_name, class_id, pending_status) VALUES (%s, %s, %s, %s, %s, %s)""",
 
-                (emp_id, course_id, class_id, status))
+                (emp_id, emp_name, course_id, course_name, class_id, pending_status))
 
     # commit the command
     conn.commit()
@@ -153,7 +160,7 @@ def remove_course():
     conn.commit()
     cur.close()
 
-    return("Success"), 202
+    return("Successfully delete course"), 202
 
 
 #approve learner enrolment
@@ -163,21 +170,21 @@ def approve_learner():
     if not request.json:
         return("Invalid body request."), 400
 
-    status = request.json['status']
+    pending_status = 'approve'
     emp_id = request.json['emp_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE course.pending_enrolment SET status = %s
+    cur.execute("""UPDATE course.pending_enrolment SET pending_status = %s
                 WHERE emp_id = %s """,
-                (status, emp_id))
+                (pending_status, emp_id))
     conn.commit()
     cur.close()
-    return("Success"), 202
+    return("Successfully update learner's pending enrolment status"), 202
   
 #as a learner & trainer, able to view course progress 
 @app.route("/learner_progress", methods=['GET'])
-def learner_progresss():
+def learner_progress():
     
     if not request.json:
         return("Invalid body request."), 400
@@ -190,7 +197,6 @@ def learner_progresss():
     cur.execute("SELECT * FROM course.class_list WHERE emp_id=%s", (emp))
 
     result = cur.fetchall()
-
     return jsonify(result), 203
 
 
@@ -209,7 +215,6 @@ def course_info():
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
     result = cur.fetchall()
-
     return jsonify(result), 203
 
 
@@ -228,7 +233,6 @@ def eligible_courses():
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
     result = cur.fetchall()
-
     return jsonify(result), 203
 
 
@@ -248,7 +252,6 @@ def pending_approval():
     cur.execute("SELECT * FROM course.pending_enrolment WHERE course_id=%s, class_id =%s", (course_id, class_id))
 
     result = cur.fetchall()
-
     return jsonify(result), 203
 
 
@@ -268,7 +271,6 @@ def ineligible_courses():
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
     result = cur.fetchall()
-
     return jsonify(result), 203
 
 #Learner to view selected course during certain period 
@@ -286,7 +288,7 @@ def get_one():
     conn.commit()
     cur.close()
 
-
+    result = cur.fetchall()
     return jsonify(result), 203
 
 #update learner's or trainer's class_list status to withdraw or completed: 
@@ -296,21 +298,21 @@ def update_status():
     if not request.json:
         return ("Invalid body request."),400
 
-    status = request.json['status']
+    pending_status = request.json['status']
     emp_id = request.json['emp_id']
     course_id = request.json['course_id']
     class_id = request.json['class_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE course.class_list SET status = %s, course_id = %s, class_id = %s
-                WHERE emp_id = %s """,(status, emp_id, course_id, class_id))
+    cur.execute("""UPDATE course.class_list SET pending_status = %s, course_id = %s, class_id = %s
+                WHERE emp_id = %s """,(pending_status, emp_id, course_id, class_id))
     
     result = cur.fetchall()
     conn.commit()
     cur.close()
+    return("Successfully update class_list status"), 202
 
-    return jsonify(result), 203
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
