@@ -25,12 +25,19 @@ mysql.init_app(app)
 @app.route("/section_info", methods=['GET'])
 def section_info():
 
+    # if not request.json:
+    #     return("Invalid body request."), 400
+
+    # course_id = request.json['course_id']
+    # class_id = request.json['class_id']
+
     conn = mysql.connect()
     cur = conn.cursor()
     cur.execute("""SELECT * FROM section.section""")
+    # cur.execute("""SELECT * FROM section.section where class_id=%s and course_id=%s""", [class_id, course_id])
     result = cur.fetchall()
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 
 ## trainer want to create quiz  ##
@@ -69,7 +76,7 @@ def upload_materials():
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""UPDATE section.section SET materials=%s WHERE section_id=%s and class_id=%s course_id=%s;""",
+    cur.execute("""UPDATE section.section SET materials=%s WHERE section_id=%s and class_id=%s and course_id=%s;""",
                 (materials, section_id, class_id, course_id))
     conn.commit()
     cur.close()
@@ -86,16 +93,15 @@ def add_section():
         return("Invalid body request."), 400
 
     section_id = request.json['section_id']
-    section_name = request.json['section_name']
-    section_desc = request.json['section_desc']
     class_id = request.json['class_id']
     course_id = request.json['course_id']
     materials = request.json['materials']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("INSERT INTO section.section(section_id, section_name, section_desc, class_id, course_id, materials) VALUES (%s, %s, %s, %s, %s, %s)",
-                (section_id, section_name, section_desc, class_id, course_id, materials))
+    cur.execute("INSERT INTO section.section(section_id, class_id, course_id, materials) VALUES (%s, %s, %s, %s)",
+                (section_id, class_id, course_id, materials))
+    result = cur.fetchall()
 
     # commit the command
     conn.commit()
@@ -103,7 +109,73 @@ def add_section():
     # close sql connection
     cur.close()
 
-    return("Success"), 201
+    return jsonify(result), 200
+
+
+@ app.route('/create_first_section', methods=['POST'])
+def create_first_section():
+
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    section_id = "1"
+    class_id = request.json['class_id']
+    course_id = request.json['course_id']
+    materials = " "
+    quiz_id = course_id + class_id + '100'
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO section.section(section_id, class_id, course_id, materials) VALUES (%s, %s, %s, %s)",
+                (section_id, class_id, course_id, materials))
+
+    cur.execute("INSERT INTO section.quiz(quiz_id, class_id, course_id, materials) VALUES (%s, %s, %s, %s)",
+                (quiz_id, class_id, course_id, materials))
+    result = cur.fetchall()
+
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return jsonify(result), 200
+
+
+@ app.route('/get_quiz_id', methods=['POST'])
+def get_quiz_id():
+
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    section_id = request.json['section_id']
+    class_id = request.json['class_id']
+    course_id = request.json['course_id']
+    final = []
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT quiz_id FROM section.quiz WHERE section_id=%s and class_id=%s and course_id=%s""",
+                (section_id, class_id, course_id))
+    result = cur.fetchall()
+
+    for i in result:
+        quizID = i['quiz_id']
+        cur.execute("""SELECT * FROM section.question WHERE quiz_id=%s""",
+                    (quizID))
+        details = cur.fetchall()
+        if len(details) > 0:
+            final.append(details)
+
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return jsonify(final), 200
 
 
 if __name__ == "__main__":
