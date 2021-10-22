@@ -53,13 +53,13 @@ def create_class():
     class_name= request.json['class_name'];
     intake = request.json['intake'];
     emp_id = request.json['emp_id'];
-    emp_name = request.json['course_id'];
+    emp_name = request.json['emp_name'];
     course_id = request.json['course_id'];
-    course_name = request.json['course_id'];
-    start_date = request.json['course_id'];
-    end_date = request.json['course_id'];
-    start_enrol = request.json['course_id'];
-    end_enrol = request.json['course_id'];
+    course_name = request.json['course_name'];
+    start_date = request.json['start_date'];
+    end_date = request.json['end_date'];
+    start_enrol = request.json['start_enrol'];
+    end_enrol = request.json['end_enrol'];
 
     conn = mysql.connect()
     cur = conn.cursor()
