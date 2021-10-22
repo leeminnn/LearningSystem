@@ -219,7 +219,7 @@ def course_info():
 
 
 # get eligible courses - compare pre-req 
-@app.route("/eligible_courses", methods=['GET'])
+@app.route("/get_learner_eligible_courses", methods=['GET'])
 def eligible_courses():
         # check for body request
     if not request.json:
