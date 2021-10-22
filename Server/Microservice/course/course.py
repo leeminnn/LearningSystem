@@ -219,21 +219,22 @@ def course_info():
 
 
 # get eligible courses - compare pre-req 
-@app.route("/get_learner_eligible_courses", methods=['GET'])
-def eligible_courses():
+@app.route("/get_learner_eligible_courses/<string:course_id>", methods=['GET'])
+def eligible_courses(course_id):
         # check for body request
     if not request.json:
         return("Invalid body request."), 400
 
-    course_id = request.json['course_id']
-
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
+    if course_id == []:
+        cur.execute("""SELECT * FROM course.course WHERE pre_req IS NULL""")
+    else:
+        cur.execute("""SELECT * FROM course.course WHERE pre_req IN %s OR pre_req IS NULL""" ,[tuple(course_id)])
 
     result = cur.fetchall()
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #as a learner, get in progress
 @app.route("/get_inprogress_course/<string:course_id>", methods=['GET'])
@@ -249,7 +250,7 @@ def get_inprogress_course(course_id):
     #             ON class.class_id = class_list.class_id
     #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
 
-    cur.execute("""SELECT * FROM course WHERE course_id IN %s""" ,[tuple(course_id)])
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
 
     result = cur.fetchall()
@@ -268,7 +269,7 @@ def get_trainer_ongoing_courses(course_id):
                # ON course.course_id = class.course_id
               #  WHERE course.course_id IN %s""" ,[tuple(course_id)])
     
-    cur.execute("""SELECT * FROM course WHERE course_id IN %s""" ,[tuple(course_id)])
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
 
@@ -285,7 +286,7 @@ def get_trainer_completed_courses(course_id):
                # INNER JOIN course.class AS class 
                 #ON course.course_id = class.course_id
                 #WHERE course.course_id IN %s""" ,[tuple(course_id)])
-    cur.execute("""SELECT * FROM course WHERE course_id IN %s""" ,[tuple(course_id)])
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
 
@@ -367,7 +368,7 @@ def update_status():
     result = cur.fetchall()
     conn.commit()
     cur.close()
-    return("Successfully update class_list status"), 202
+    return("Successfully update class_list status"), 200
 
 
 if __name__ == "__main__":
