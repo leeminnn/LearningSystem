@@ -386,5 +386,132 @@ def get_learner_courses_completed():
 
     return jsonify(result), 200
 
+
+#learner completed courses 
+@app.route("/learner_completed_courses", methods=['POST'])
+def learner_completed_courses(course_id):
+            # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    # cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id"
+    #             FROM course.course AS course 
+    #             INNER JOIN course.class AS class 
+    #             ON course.course_id = class.course_id
+    #             INNER JOIN course.class_list AS class_list
+    #             ON class.class_id = class_list.class_id
+    #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
+
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])    
+    result = cur.fetchall()
+    res = requests.post("http://192.168.0.142:5000/get_learner_courses_completed", result).json()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(res), 200
+
+#learner inprogress courses 
+@app.route("/learner_inprogress_courses", methods=['POST'])
+def learner_inprogress_courses(course_id):
+            # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    # cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id"
+    #             FROM course.course AS course 
+    #             INNER JOIN course.class AS class 
+    #             ON course.course_id = class.course_id
+    #             INNER JOIN course.class_list AS class_list
+    #             ON class.class_id = class_list.class_id
+    #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
+
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
+    result = cur.fetchall()
+    res = requests.post("http://192.168.0.142:5000/get_inprogress_course/<string:course_id>", result).json()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(res), 200
+
+
+#learner eligible courses 
+@app.route("/learner_eligible_courses", methods=['POST'])
+def learner_eligible_courses(course_id):
+            # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    if course_id == []:
+        cur.execute("""SELECT * FROM course.course WHERE pre_req IS NULL""")
+    else:
+        cur.execute("""SELECT * FROM course.course WHERE pre_req IN %s OR pre_req IS NULL""" ,[tuple(course_id)])    
+        result = cur.fetchall()
+
+    res = requests.post("http://192.168.0.142:5000/get_learner_eligible_courses/<string:course_id>", result).json()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(res), 200
+
+#trainer inprogress courses 
+@app.route("/trainer_inprogress_courses", methods=['POST'])
+def trainer_inprogress_courses(course_id):
+            # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    #cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
+                #FROM course.course AS course 
+               # INNER JOIN course.class AS class 
+               # ON course.course_id = class.course_id
+              #  WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
+
+    result = cur.fetchall()
+    res = requests.post("http://192.168.0.142:5000/get_trainer_ongoing_courses/<string:course_id>", result).json()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(res), 200
+
+#trainer completed courses 
+@app.route("/trainer_completed_courses", methods=['POST'])
+def trainer_completed_courses(course_id):
+            # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    #cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
+                #FROM course.course AS course 
+               # INNER JOIN course.class AS class 
+                #ON course.course_id = class.course_id
+                #WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
+
+    result = cur.fetchall()
+    res = requests.post("http://192.168.0.142:5000/get_trainer_completed_courses/<string:course_id>", result).json()
+    conn.commit()
+    cur.close()
+
+
+    return jsonify(res), 200
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
