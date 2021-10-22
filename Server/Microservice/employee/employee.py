@@ -3,8 +3,11 @@ import datetime
 from flask import jsonify, Flask, request
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+cors = CORS(app)
 
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3305
@@ -24,10 +27,10 @@ def all_employee():
     cur.execute("""SELECT * FROM employee.employee""")
     result = cur.fetchall()
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #get all information of 1 employee
-@app.route("/get_one", methods=['GET'])
+@app.route("/get_one", methods=['POST'])
 def get_one():
                 # check for body request
     if not request.json:
@@ -45,10 +48,10 @@ def get_one():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #get employee name when type id
-@app.route("/get_emp_name", methods=['GET'])
+@app.route("/get_emp_name", methods=['POST'])
 def get_emp_name():
                 # check for body request
     if not request.json:
@@ -66,7 +69,7 @@ def get_emp_name():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #get all trainers id name
 @app.route("/get_trainers", methods=['GET'])
@@ -82,7 +85,7 @@ def get_trainers():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 
 #update employee information
@@ -110,7 +113,7 @@ def update_employee():
     # close sql connection
     cur.close()
 
-    return("Successfully Update employee information"), 201
+    return("Successfully Update employee information"), 200
 
 #add new employee
 @app.route('/add_employee', methods=['POST']) 
@@ -135,7 +138,7 @@ def add_employee():
     # close sql connection
     cur.close()
 
-    return("Successfully added employee"), 201
+    return("Successfully added employee"), 200
 
 #insert new trainer
 @app.route('/add_trainer', methods=['POST']) 
@@ -158,7 +161,7 @@ def add_trainer():
 
     # close sql connection
     cur.close()
-    return("Successfully add new trainer"), 201
+    return("Successfully add new trainer"), 200
 
 #update trainer courses teaching
 @app.route('/update_trainer_teaching', methods=['PUT']) 
@@ -181,7 +184,7 @@ def update_trainer_teaching():
     # close sql connection
     cur.close()
 
-    return("Successfully update courses teaching"), 201
+    return("Successfully update courses teaching"), 200
 
 #update trainer courses completed
 @app.route('/update_trainer_completed', methods=['PUT']) 
@@ -204,7 +207,7 @@ def update_trainer_completed():
     # close sql connection
     cur.close()
 
-    return("Successfully update courses completed"), 201
+    return("Successfully update courses completed"), 200
 
 #insert new learner
 @app.route('/add_learner', methods=['POST']) 
@@ -228,7 +231,7 @@ def add_learner():
 
     # close sql connection
     cur.close()
-    return("Successfully add new learner"), 201
+    return("Successfully add new learner"), 200
 
 #update learner courses_ongoing
 @app.route('/update_learner_ongoing', methods=['PUT']) 
@@ -251,7 +254,7 @@ def update_learner_ongoing():
     # close sql connection
     cur.close()
 
-    return("Successfully update ongoing courses"), 201
+    return("Successfully update ongoing courses"), 200
 
 #update learner courses_completed
 @app.route('/update_learner_completed', methods=['PUT']) 
@@ -297,10 +300,10 @@ def update_learner_badge():
     # close sql connection
     cur.close()
 
-    return("Successfully update learner badge"), 201
+    return("Successfully update learner badge"), 200
 
 #get trainer courses teaching
-@app.route("/get_courses_teaching", methods=['GET'])
+@app.route("/get_courses_teaching", methods=['POST'])
 def get_courses_teaching():
     # check for body request
     if not request.json:
@@ -318,10 +321,10 @@ def get_courses_teaching():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #get trainer completed courses
-@app.route("/get_trainer_courses_completed", methods=['GET'])
+@app.route("/get_trainer_courses_completed", methods=['POST'])
 def get_trainer_courses_completed():
     # check for body request
     if not request.json:
@@ -339,10 +342,10 @@ def get_trainer_courses_completed():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #get learner ongoing courses
-@app.route("/get_courses_ongoing", methods=['GET'])
+@app.route("/get_courses_ongoing", methods=['POST'])
 def get_courses_ongoing():
     # check for body request
     if not request.json:
@@ -360,10 +363,10 @@ def get_courses_ongoing():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #get learner completed courses
-@app.route("/get_learner_courses_completed", methods=['GET'])
+@app.route("/get_learner_courses_completed", methods=['POST'])
 def get_learner_courses_completed():
     # check for body request
     if not request.json:
@@ -381,7 +384,7 @@ def get_learner_courses_completed():
     cur.close()
 
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
