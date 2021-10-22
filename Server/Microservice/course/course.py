@@ -6,7 +6,7 @@ from pymysql.cursors import DictCursor
 import time
 from flask_cors import CORS
 
-app = Flask(name)
+app = Flask(__name__)
 cors = CORS(app)
 
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
