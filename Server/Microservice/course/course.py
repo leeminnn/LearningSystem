@@ -52,13 +52,13 @@ def create_class():
     class_name= request.json['class_name'];
     intake = request.json['intake'];
     emp_id = request.json['emp_id'];
-    emp_name = request.json['course_id'];
+    emp_name = request.json['emp_name'];
     course_id = request.json['course_id'];
-    course_name = request.json['course_id'];
-    start_date = request.json['course_id'];
-    end_date = request.json['course_id'];
-    start_enrol = request.json['course_id'];
-    end_enrol = request.json['course_id'];
+    course_name = request.json['course_name'];
+    start_date = request.json['start_date'];
+    end_date = request.json['end_date'];
+    start_enrol = request.json['start_enrol'];
+    end_enrol = request.json['end_enrol'];
 
     conn = mysql.connect()
     cur = conn.cursor()
@@ -230,11 +230,8 @@ def course_info():
 
 
 # get eligible courses - compare pre-req 
-@app.route("/get_learner_eligible_courses/<string:course_id>", methods=['POST'])
+@app.route("/get_learner_eligible_courses/<string:course_id>", methods=['GET'])
 def eligible_courses(course_id):
-        # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
 
     conn = mysql.connect()
     cur = conn.cursor()
@@ -242,24 +239,17 @@ def eligible_courses(course_id):
     if course_id == []:
         cur.execute("""SELECT * FROM course.course WHERE pre_req IS NULL""")
     else:
+        print(course_id)
         cur.execute("""SELECT * FROM course.course WHERE pre_req IN %s OR pre_req IS NULL""" ,[tuple(course_id)])
 
     result = cur.fetchall()
     return jsonify(result), 200
 
 #as a learner, get in progress
-@app.route("/get_inprogress_course/<string:course_id>", methods=['POST'])
+@app.route("/get_inprogress_course/<string:course_id>", methods=['GET'])
 def get_inprogress_course(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
-
-    # cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id"
-    #             FROM course.course AS course 
-    #             INNER JOIN course.class AS class 
-    #             ON course.course_id = class.course_id
-    #             INNER JOIN course.class_list AS class_list
-    #             ON class.class_id = class_list.class_id
-    #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
 
     cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
@@ -268,7 +258,7 @@ def get_inprogress_course(course_id):
     return jsonify(result), 200
 
 #as a learner, learner completed courses 
-@app.route("/completed_courses/<string:course_id>", methods=['POST'])
+@app.route("/completed_courses/<string:course_id>", methods=['GET'])
 def completed_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
@@ -279,33 +269,22 @@ def completed_courses(course_id):
     return jsonify(result), 200
 
 #as a trainer, get ongoing courses
-@app.route("/get_trainer_ongoing_courses/<string:course_id>", methods=['POST'])
+@app.route("/get_trainer_ongoing_courses/<string:course_id>", methods=['GET'])
 def get_trainer_ongoing_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
-
-    #cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
-                #FROM course.course AS course 
-               # INNER JOIN course.class AS class 
-               # ON course.course_id = class.course_id
-              #  WHERE course.course_id IN %s""" ,[tuple(course_id)])
-    
+    print(course_id)
     cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
     return jsonify(result), 200
 
 #as a trainer, get completed courses
-@app.route("/get_trainer_completed_courses/<string:course_id>", methods=['POST'])
+@app.route("/get_trainer_completed_courses/<string:course_id>", methods=['GET'])
 def get_trainer_completed_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
 
-    #cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
-                #FROM course.course AS course 
-               # INNER JOIN course.class AS class 
-                #ON course.course_id = class.course_id
-                #WHERE course.course_id IN %s""" ,[tuple(course_id)])
     cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
@@ -398,7 +377,7 @@ def available_classes():
     result = cur.fetchall()
     return jsonify(result), 200
 
-#get courses name and id for pre-red dropdown to create course
+#get courses name and id for pre-req dropdown to create course
 @app.route("/prereq_dropdown", methods=['POST'])
 def prereq_dropdown():
     if not request.json:
