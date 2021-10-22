@@ -19,7 +19,7 @@ mysql = MySQL(app, cursorclass=DictCursor)
 mysql.init_app(app)
 
 #get list all employees
-@app.route("/all_employee", methods=['GET']) 
+@app.route("/all_employee", methods=['POST']) 
 def all_employee():
 
     conn = mysql.connect()
@@ -72,7 +72,7 @@ def get_emp_name():
     return jsonify(result), 200
 
 #get all trainers id name
-@app.route("/get_trainers", methods=['GET'])
+@app.route("/get_trainers", methods=['POST'])
 def get_trainers():
 
     conn = mysql.connect()
@@ -277,7 +277,7 @@ def update_learner_completed():
     # close sql connection
     cur.close()
 
-    return("Successfully update completed courses"), 201
+    return("Successfully update completed courses"), 200
 
 #update learner courses_badge
 @app.route('/update_learner_badge', methods=['PUT']) 

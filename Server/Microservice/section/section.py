@@ -26,7 +26,7 @@ def get_score():
     cur.execute("""SELECT * FROM employee""")
     result = cur.fetchall()
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 
 ## trainer want to create quiz  ##
@@ -41,7 +41,7 @@ def create_quiz():
     cur.execute("""SELECT * FROM employee WHERE emp_id=%s""", [])
     result = cur.fetchall()
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 
 ## trainer want to create section ##
@@ -70,7 +70,7 @@ def add_section():
     # close sql connection
     cur.close()
 
-    return("Success"), 201
+    return("Success"), 200
 
 
 if __name__ == "__main__":
