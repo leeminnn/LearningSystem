@@ -394,12 +394,19 @@ def learner_completed_courses(course_id):
     if not request.json:
         return("Invalid body request."), 400
 
-
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT courses_completed FROM employee.learner where emp_id=%s""" (course_id))
+    # cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id"
+    #             FROM course.course AS course 
+    #             INNER JOIN course.class AS class 
+    #             ON course.course_id = class.course_id
+    #             INNER JOIN course.class_list AS class_list
+    #             ON class.class_id = class_list.class_id
+    #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
+
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])    
     result = cur.fetchall()
-    res = requests.post("http://192.168.0.142:5000/<endpoint name>", result).json()
+    res = requests.post("http://192.168.0.142:5000/get_learner_courses_completed", result).json()
     conn.commit()
     cur.close()
 
