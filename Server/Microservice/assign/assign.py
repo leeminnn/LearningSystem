@@ -16,7 +16,7 @@ mysql = MySQL(app, cursorclass=DictCursor)
 mysql.init_app(app)
 
 
-@app.route('/hi', methods=['GET'])
+@app.route('/hi', methods=['POST'])
 def hi():
 
     conn = mysql.connect()
@@ -24,7 +24,7 @@ def hi():
     cur.execute("""SELECT * FROM section.section""")
     result = cur.fetchall()
 
-    return jsonify({'data': result}), 203
+    return jsonify({'data': result}), 200
 
 
 @app.route('/enrol', methods=['POST'])
@@ -55,7 +55,7 @@ def enrol():
     # close sql connection
     cur.close()
 
-    return("Success"), 201
+    return("Success"), 200
 
 
 @app.route('/assign', methods=['POST'])
@@ -82,7 +82,7 @@ def assign():
     conn.commit()
     cur.close()
 
-    return("Success"), 201
+    return("Success"), 200
 
 
 # HR withdraw students
@@ -100,7 +100,7 @@ def withdraw():
     conn.commit()
     cur.close()
 
-    return("Success"), 201
+    return("Success"), 200
 
 
 if __name__ == "__main__":

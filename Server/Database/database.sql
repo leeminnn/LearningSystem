@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS section.quiz (
   section_id int,
   class_id int,
   course_id int,
-  course_name VARCHAR (255),
   total_mark int, 
   quiz_type VARCHAR (255),
   FOREIGN KEY (section_id, class_id, course_id) REFERENCES section(section_id, class_id, course_id)
@@ -42,7 +41,6 @@ CREATE TABLE course.course (
 
 CREATE TABLE IF NOT EXISTS course.class (
   class_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  class_name VARCHAR (255) NOT NULL,
   intake int,
   emp_id int NOT NULL, 
   emp_name VARCHAR (255),

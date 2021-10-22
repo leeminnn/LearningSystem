@@ -3,8 +3,11 @@ import datetime
 from flask import jsonify, Flask, request
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
+import time
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app)
 
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 app.config['MYSQL_DATABASE_PORT'] = 3305
@@ -20,7 +23,6 @@ mysql.init_app(app)
 @app.route('/create_course', methods=['POST']) 
 def create_course():
 
-    # check for body request
     if not request.json:
         return("Invalid body request."), 400
 
@@ -34,13 +36,10 @@ def create_course():
     cur.execute("""INSERT INTO course.course(course_id, course_name, course_desc, pre_req) VALUES (%s, %s, %s, %s)""",
                 (course_id, course_name, course_desc, pre_req))
 
-    # commit the command
     conn.commit()
-
-    # close sql connection
     cur.close()
 
-    return("Successfully Create Course"), 201
+    return("Successfully Create Course"), 200
 
 #HR Create new class to assign trainers after creating a new course
 @app.route('/create_class', methods=['POST']) 
@@ -66,14 +65,12 @@ def create_class():
     cur.execute("""INSERT INTO course.class(class_id,class_name,intake,emp_id, emp_name, course_id, course_name, start_date, end_date, start_enrol, end_enrol)
      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (class_id,class_name,intake,emp_id, emp_name, course_id, course_name, start_date, end_date, start_enrol, end_enrol))   
+    
     conn.commit()
-
-    # close sql connection
     cur.close()
 
-    return("Successfully Create Class"), 201
+    return("Successfully Create Class"), 200
     
-
 #HR update course
 @app.route('/update_course', methods=['PUT']) 
 def update_class():
@@ -92,15 +89,13 @@ def update_class():
                 WHERE course_id = %s """,
                 (course_name, course_desc, pre_req, course_id))
 
-    # commit the command
     conn.commit()
-
-    # close sql connection
     cur.close()
 
-    return("Successfully Update Course"), 201
+    return("Successfully Update Course"), 200
 
-@app.route("/all_courses", methods=['GET']) 
+#get all courses
+@app.route("/all_courses", methods=['POST']) 
 def all_courses():
 
     conn = mysql.connect()
@@ -108,18 +103,15 @@ def all_courses():
     cur.execute("SELECT * FROM course.course")
 
     result = cur.fetchall()
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 ## learner want to enroll to the course ##
 @app.route('/enrol', methods=['POST']) 
 def enrol():
 
-    # check for body request
     if not request.json:
         return("Invalid body request."), 400
 
-    # request --> getting data that is being sent over
-    # json --> convert file to json format
     emp_id = request.json['emp_id']
     emp_name = request.json['emp_name']
     course_id = request.json['course_id']
@@ -127,25 +119,19 @@ def enrol():
     class_id = request.json['class_id']
     pending_status = request.json['pending_status']
 
-    # connect to sql
     conn = mysql.connect()
     cur = conn.cursor()
-
-    # SQL command
 
     cur.execute("""INSERT INTO course.pending_enrolment(emp_id, emp_name, course_id, course_name, class_id, pending_status) VALUES (%s, %s, %s, %s, %s, %s)""",
 
                 (emp_id, emp_name, course_id, course_name, class_id, pending_status))
 
-    # commit the command
     conn.commit()
-
-    # close sql connection
     cur.close()
 
-    return("Successfully Pending Enroll"), 201
+    return("Successfully Pending Enroll"), 200
 
-    
+# delete course
 @app.route('/remove', methods=['DELETE'])
 def remove_course():
 
@@ -157,11 +143,35 @@ def remove_course():
     conn = mysql.connect()
     cur = conn.cursor()
     cur.execute("DELETE FROM course.course WHERE course_id=%s", (course_id))
+
     conn.commit()
     cur.close()
 
-    return("Successfully delete course"), 202
+    return("Successfully delete course"), 200
 
+#hr enroll learner
+@app.route('/enroll_learner', methods=['POST'])
+def enroll_learner():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+    emp_name = request.json['emp_name']
+    course_id = request.json['course_id']
+    course_name = request.json['course_name']
+    class_id = request.json['class_id']
+    pending_status = 'approve'
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO course.pending_enrolment(emp_id, emp_name, course_id, course_name, class_id, pending_status) VALUES (%s, %s, %s, %s, %s, %s)",
+                (emp_id, emp_name, course_id, course_name, class_id, pending_status))
+
+    conn.commit()
+    cur.close()
+
+    return("Successfully enroll learner"), 200
 
 #approve learner enrolment
 @app.route('/approve_learner', methods=['PUT'])
@@ -178,12 +188,14 @@ def approve_learner():
     cur.execute("""UPDATE course.pending_enrolment SET pending_status = %s
                 WHERE emp_id = %s """,
                 (pending_status, emp_id))
+
     conn.commit()
     cur.close()
-    return("Successfully update learner's pending enrolment status"), 202
+
+    return("Successfully update learner's pending enrolment status"), 200
   
 #as a learner & trainer, able to view course progress 
-@app.route("/learner_progress", methods=['GET'])
+@app.route("/learner_progress", methods=['POST'])
 def learner_progress():
     
     if not request.json:
@@ -197,11 +209,10 @@ def learner_progress():
     cur.execute("SELECT * FROM course.class_list WHERE emp_id=%s", (emp))
 
     result = cur.fetchall()
-    return jsonify(result), 203
-
+    return jsonify(result), 200
 
 #as a learner, view course outline and description
-@app.route("/course_info", methods=['GET'])
+@app.route("/course_info", methods=['POST'])
 def course_info():
         # check for body request
     if not request.json:
@@ -215,11 +226,11 @@ def course_info():
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
     result = cur.fetchall()
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 
 # get eligible courses - compare pre-req 
-@app.route("/get_learner_eligible_courses/<string:course_id>", methods=['GET'])
+@app.route("/get_learner_eligible_courses/<string:course_id>", methods=['POST'])
 def eligible_courses(course_id):
         # check for body request
     if not request.json:
@@ -237,7 +248,7 @@ def eligible_courses(course_id):
     return jsonify(result), 200
 
 #as a learner, get in progress
-@app.route("/get_inprogress_course/<string:course_id>", methods=['GET'])
+@app.route("/get_inprogress_course/<string:course_id>", methods=['POST'])
 def get_inprogress_course(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
@@ -254,34 +265,21 @@ def get_inprogress_course(course_id):
 
 
     result = cur.fetchall()
-
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #as a learner, learner completed courses 
-@app.route("/get_learner_courses_completed/<string:course_id>", methods=['GET'])
-def get_learner_courses_completed(course_id):
+@app.route("/completed_courses/<string:course_id>", methods=['POST'])
+def completed_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
 
-    # cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,class.emp_name "trainer_name",class.emp_id "trainer_id"
-    #             FROM course.course AS course 
-    #             INNER JOIN course.class AS class 
-    #             ON course.course_id = class.course_id
-    #             INNER JOIN course.class_list AS class_list
-    #             ON class.class_id = class_list.class_id
-    #             WHERE course.course_id IN %s""" ,[tuple(course_id)])
-
-    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
-
+    cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""",[tuple(course_id)])
 
     result = cur.fetchall()
-
     return jsonify(result), 200
 
-
-
 #as a trainer, get ongoing courses
-@app.route("/get_trainer_ongoing_courses/<string:course_id>", methods=['GET'])
+@app.route("/get_trainer_ongoing_courses/<string:course_id>", methods=['POST'])
 def get_trainer_ongoing_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
@@ -295,11 +293,10 @@ def get_trainer_ongoing_courses(course_id):
     cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
-
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #as a trainer, get completed courses
-@app.route("/get_trainer_completed_courses/<string:course_id>", methods=['GET'])
+@app.route("/get_trainer_completed_courses/<string:course_id>", methods=['POST'])
 def get_trainer_completed_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
@@ -312,12 +309,10 @@ def get_trainer_completed_courses(course_id):
     cur.execute("""SELECT * FROM course.course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
-
-    return jsonify(result), 203
-
+    return jsonify(result), 200
 
 # Get list of pending approval based on course id and class id
-@app.route("/pending_approval", methods=['GET'])
+@app.route("/pending_approval", methods=['POST'])
 def pending_approval():
         # check for body request
     if not request.json:
@@ -332,12 +327,10 @@ def pending_approval():
     cur.execute("SELECT * FROM course.pending_enrolment WHERE course_id=%s, class_id =%s", (course_id, class_id))
 
     result = cur.fetchall()
-    return jsonify(result), 203
-
-
+    return jsonify(result), 200
 
 # Get list of course_id of ineligible courses
-@app.route("/ineligible_courses", methods=['GET'])
+@app.route("/ineligible_courses", methods=['POST'])
 def ineligible_courses():
         # check for body request
     if not request.json:
@@ -351,25 +344,20 @@ def ineligible_courses():
     cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
 
     result = cur.fetchall()
-    return jsonify(result), 203
+    return jsonify(result), 200
 
-#Learner to view selected course during certain period 
-@app.route("/view_available_course/<string:date>", methods=['GET'])
-def get_one():
-                # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
+#Learner to view selected classes during certain period 
+@app.route('/selected_date', methods=['POST'])
+def selected_date():
 
-    date = request.json["date"]
+    date = time.strftime("%Y-%m-%d")
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM course.course WHERE %s BETWEEN start_date AND end_date""", [date])
-    result = cur.fetchall()
-    conn.commit()
-    cur.close()
 
+    cur.execute("""SELECT * FROM course.class WHERE %s BETWEEN start_date AND end_date""", [date])
+    
     result = cur.fetchall()
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 #update learner's or trainer's class_list status to withdraw or completed: 
 @app.route('/update_status', methods=['PUT'])
@@ -388,11 +376,43 @@ def update_status():
     cur.execute("""UPDATE course.class_list SET pending_status = %s, course_id = %s, class_id = %s
                 WHERE emp_id = %s """,(pending_status, emp_id, course_id, class_id))
     
-    result = cur.fetchall()
     conn.commit()
     cur.close()
-    return("Successfully update class_list status"), 200
 
+    return("Successfully update learner's or trainer's class_list status"), 200
+
+#List of classes based on courses id
+@app.route("/available_classes", methods=['POST'])
+def available_classes():
+        # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT class_id, class_name FROM course.class WHERE course_id=%s",(course_id))
+
+    result = cur.fetchall()
+    return jsonify(result), 200
+
+#get courses name and id for pre-red dropdown to create course
+@app.route("/prereq_dropdown", methods=['POST'])
+def prereq_dropdown():
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("SELECT course_id, course_name FROM course.course")
+
+    result = cur.fetchall()
+    return jsonify(result), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
