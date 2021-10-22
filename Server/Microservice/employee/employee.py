@@ -277,7 +277,7 @@ def update_learner_completed():
     # close sql connection
     cur.close()
 
-    return("Successfully update completed courses"), 201
+    return("Successfully update completed courses"), 200
 
 #update learner courses_badge
 @app.route('/update_learner_badge', methods=['PUT']) 
