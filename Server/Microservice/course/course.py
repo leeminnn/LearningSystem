@@ -262,11 +262,13 @@ def get_trainer_ongoing_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
-                FROM course.course AS course 
-                INNER JOIN course.class AS class 
-                ON course.course_id = class.course_id
-                WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    #cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
+                #FROM course.course AS course 
+               # INNER JOIN course.class AS class 
+               # ON course.course_id = class.course_id
+              #  WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    
+    cur.execute("""SELECT * FROM course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
 
@@ -278,11 +280,12 @@ def get_trainer_completed_courses(course_id):
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
-                FROM course.course AS course 
-                INNER JOIN course.class AS class 
-                ON course.course_id = class.course_id
-                WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    #cur.execute("""SELECT course.course_id,course.course_name,course_desc,class.class_id,class_name,start_date,end_date,emp_name,emp_id
+                #FROM course.course AS course 
+               # INNER JOIN course.class AS class 
+                #ON course.course_id = class.course_id
+                #WHERE course.course_id IN %s""" ,[tuple(course_id)])
+    cur.execute("""SELECT * FROM course WHERE course_id IN %s""" ,[tuple(course_id)])
 
     result = cur.fetchall()
 
