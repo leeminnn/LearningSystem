@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS section.section (
 
 CREATE TABLE IF NOT EXISTS section.quiz (
   quiz_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  section_id int NOT NULL,
-  class_id int NOT NULL,
-  course_id int NOT NULL,
+  section_id int,
+  class_id int,
+  course_id int,
   course_name VARCHAR (255),
   total_mark int, 
   quiz_type VARCHAR (255),
@@ -25,9 +25,7 @@ CREATE TABLE IF NOT EXISTS section.question (
   quiz_id int NOT NULL,
   quiz_desc VARCHAR (255),
   quiz_ans VARCHAR (255),
-  first_option VARCHAR (255),
-  second_option VARCHAR (255),
-  third_option VARCHAR (255),
+  option VARCHAR (255),
   mark int, 
   CONSTRAINT question_fk_quiz FOREIGN KEY (quiz_id) REFERENCES quiz(quiz_id)
 );
@@ -86,6 +84,7 @@ CREATE DATABASE IF NOT EXISTS employee;
 CREATE TABLE IF NOT EXISTS employee.employee (
   emp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   emp_name VARCHAR (255) NOT NULL,
+  password VARCHAR (255),
   email VARCHAR (255),
   phone int(8),
   dept VARCHAR (255)
