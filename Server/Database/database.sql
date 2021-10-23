@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS section.question (
   quiz_id int NOT NULL,
   quiz_desc VARCHAR (255),
   quiz_ans VARCHAR (255),
-  option VARCHAR (255),
+  question_option VARCHAR (255),
   mark int, 
   CONSTRAINT question_fk_quiz FOREIGN KEY (quiz_id) REFERENCES quiz(quiz_id)
 );
