@@ -52,7 +52,7 @@ def create_quiz():
     cur.execute("""SELECT * FROM employee WHERE emp_id=%s""", [])
     result = cur.fetchall()
 
-    return jsonify(result), 203
+    return jsonify(result), 200
 
 
 ## trainer want to upload materials  ##
@@ -184,7 +184,6 @@ def get_quiz_id():
     cur.close()
 
     return jsonify(final), 200
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)
