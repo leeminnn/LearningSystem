@@ -22,19 +22,19 @@ mysql.init_app(app)
 
 ## learner want to take the quiz ##
 ## I need learner score, check the answer with database ##
-@app.route("/section_info", methods=['GET'])
+@app.route("/section_info", methods=['POST'])
 def section_info():
 
-    # if not request.json:
-    #     return("Invalid body request."), 400
+    if not request.json:
+        return("Invalid body request."), 400
 
-    # course_id = request.json['course_id']
-    # class_id = request.json['class_id']
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT * FROM section.section""")
-    # cur.execute("""SELECT * FROM section.section where class_id=%s and course_id=%s""", [class_id, course_id])
+    cur.execute(
+        """SELECT * FROM section.section where class_id=%s and course_id=%s""", [class_id, course_id])
     result = cur.fetchall()
 
     return jsonify(result), 200
@@ -157,9 +157,14 @@ def get_quiz_id():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""SELECT quiz_id FROM section.quiz WHERE section_id=%s and class_id=%s and course_id=%s""",
-                (section_id, class_id, course_id))
-    result = cur.fetchall()
+    if section_id != " ":
+        cur.execute("""SELECT quiz_id, total_mark FROM section.quiz WHERE section_id=%s and class_id=%s and course_id=%s""",
+                    (section_id, class_id, course_id))
+        result = cur.fetchall()
+    else:
+        cur.execute("""SELECT quiz_id, total_mark FROM section.quiz WHERE quiz_type='graded' and class_id=%s and course_id=%s""",
+                    (class_id, course_id))
+        result = cur.fetchall()
 
     for i in result:
         quizID = i['quiz_id']
@@ -168,6 +173,9 @@ def get_quiz_id():
         details = cur.fetchall()
         if len(details) > 0:
             final.append(details)
+
+    if len(final) > 0:
+        final.append(result[0]['total_mark'])
 
     # commit the command
     conn.commit()
