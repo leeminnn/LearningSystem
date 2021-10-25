@@ -766,8 +766,9 @@ def all_eligible_classes():
         return("Invalid body request."), 400
 
     course_id = request.json['course_id']
-    today = datetime.now()
-    dt_string = today.strftime("%d/%m/%Y")
+    dt_string = datetime.now().date()
+    #dt_string = today.strftime("%d/%m/%Y")
+    print(dt_string)
     final = []
 
     conn = mysql.connect()
@@ -777,7 +778,8 @@ def all_eligible_classes():
         "SELECT * FROM course.class WHERE course_id=%s", (course_id))
     result = cur.fetchall()
     for i in result:
-        if datetime.strftime(i['start_date'], "%Y/%m/%d") < dt_string and datetime(i['end_date'],  "%Y/%m/%d") > dt_string:
+        #if datetime.strftime(i['start_date'], "%Y/%m/%d") < dt_string and datetime(i['end_date'],  "%Y/%m/%d") > dt_string:
+        if i['start_date'] < dt_string and i['end_date'] > dt_string:
             final.append(i)
 
     conn.commit()
