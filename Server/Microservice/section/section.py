@@ -193,39 +193,138 @@ def get_quiz_id():
 
     return jsonify(final), 200
 
-
-@ app.route('/get_questions', methods=['POST'])
-def get_questions():
-
+@ app.route('/get_user_sections', methods=['POST'])
+def get_user_sections():
+    
     # check for body request
     if not request.json:
         return("Invalid body request."), 400
 
-    quiz_id = request.json['quiz_id']
+    emp_id = request.json['emp_id']
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
 
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""SELECT * FROM section.question WHERE quiz_id=%s""",
-                (quiz_id))
+    cur.execute("""SELECT ungraded_result FROM course.class_list WHERE emp_id=%s and class_id=%s""",
+                    (emp_id, class_id))
     result = cur.fetchall()
-    for i in result:
-        i['question_option'] = i['question_option'].split(',')
-        temp = []
-        for j in i['question_option']:
-            if j != 'undefined':
-                temp.append(j)
-        new_temp = random.sample(temp, len(temp))
-        i['question_option'] = new_temp
 
-    # commit the command
+    ungraded_result = result[0]["ungraded_result"].split(',')
+    print(ungraded_result)
+    #set section_count as a starting point of Section 1 of the class
+    section_count = 1
+    for i in ungraded_result:
+         if int(i)!= 0:
+             section_count+=1
+
+    cur.execute("""SELECT * FROM section.section where class_id=%s and course_id=%s order by section_id""",
+                    (class_id, course_id))
+    section_result = cur.fetchall()
     conn.commit()
-
-    # close sql connection
     cur.close()
 
-    return jsonify(result), 200
+    final=[]
+    for i in range(0,section_count):
+        final.append(section_result[i])
 
+    print(final)
+    
+    return jsonify(final), 200
+
+#insert default ungraded_result array into class_list, considering the number of existing sections
+@ app.route('/declare_ungraded_quiz', methods=['POST'])
+def declare_ungraded_quiz():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    emp_id = request.json['emp_id']
+    course_id = request.json['course_id']
+    class_id = request.json['class_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT COUNT(*) section_count FROM section.section WHERE course_id=%s and class_id=%s""",
+                    (course_id, class_id))
+    result = cur.fetchall()
+
+    ungraded_result = []
+
+    for i in range(result[0]["section_count"]):
+       ungraded_result.append(0)
+    ungraded_result = str(ungraded_result).strip('][')
+
+    cur.execute("""UPDATE course.class_list SET ungraded_result=%s WHERE emp_id=%s and class_id=%s""",
+                (ungraded_result, emp_id, class_id))
+
+    conn.commit()
+    cur.close()
+    
+    return("Successfully update ungraded_quiz list"), 200
+
+
+@ app.route('/update_progress', methods=['PUT'])
+def update_progress():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    #upon completing quiz, we get the section_id for the quiz that the user completed
+    quiz_section = int(request.json['section_id'])
+    emp_id = request.json['emp_id']
+    class_id = request.json['class_id']
+    course_id = request.json['course_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    #get sections of the class
+    cur.execute("""SELECT * FROM section.section where class_id=%s and course_id=%s order by section_id""",
+                    (class_id, course_id))
+    section_result = cur.fetchall()
+
+    section_position=0
+    for i in range(0,len(section_result)):
+        print(quiz_section)
+        print(section_result[i]["section_id"])
+        if (section_result[i]["section_id"]==quiz_section):
+            break
+        else:
+            section_position+=1
+
+    print("Section postion " + str(section_position))
+
+    cur.execute("""SELECT * FROM course.class_list WHERE emp_id=%s and class_id=%s""",
+                    (emp_id, class_id))
+    result = cur.fetchall()
+
+    ungraded_result = result[0]["ungraded_result"].split(',')
+    ungraded_result = list(map(int, ungraded_result))
+
+    ungraded_result[section_position] = 1
+
+    #update progress
+    completed_section = 0
+    total_section = 0
+    for i in ungraded_result:
+        if int(i) == 1:
+            completed_section+=1
+        total_section +=1
+
+    new_ungraded_result = str(ungraded_result).strip('][')
+    updated_progress = (completed_section/total_section)*100
+
+    #insert to database
+    cur.execute("""UPDATE course.class_list SET progress=%s,ungraded_result=%s WHERE emp_id=%s and class_id=%s""",
+                (updated_progress,new_ungraded_result,emp_id, class_id))
+    updated_result = cur.fetchall()
+    conn.commit()
+    cur.close()
+
+    return ("successfully updated progress"), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5002, debug=True)
