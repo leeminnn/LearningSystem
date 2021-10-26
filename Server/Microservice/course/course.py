@@ -813,7 +813,30 @@ def enroll_engineer():
     cur.close()
 
     return("Success"), 200
+"""
+@app.route('/pass_final_quiz', methods=['PUT'])
+def pass_final_quiz():
+    if not request.json:
+        return("Invalid body request."), 400
+    conn = mysql.connect()
+    cur = conn.cursor()
 
+    class_id = request.json['class_id']
+    emp_id = request.json['emp_id']
+    quiz_mark = 78
+
+    #check for marks
+    if quiz_mark > 50:
+"""
+        #cur.execute("""UPDATE course.class_list set final_quiz_result=%s WHERE emp_id=%s AND class_id=%s""",("Pass",emp_id,class_id))
+    #elif quiz_mark <= 50:
+        #cur.execute("""UPDATE course.class_list set final_quiz_result=%s WHERE emp_id=%s AND class_id=%s""",("Fail",emp_id,class_id))
+"""
+    conn.commit()
+    cur.close()
+
+    return("Success"), 200
+"""
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
