@@ -296,52 +296,42 @@ def add_learner():
 # update learner courses_ongoing
 
 
-@app.route('/update_learner_ongoing', methods=['PUT'])
+@app.route('/update_learner_courses_list', methods=['PUT'])
 def update_learner_ongoing():
     # check for body request
     if not request.json:
         return("Invalid body request."), 400
-
+    
+    course_id = int(request.json['course_id'])
     emp_id = request.json['emp_id']
-    courses_ongoing = request.json['courses_ongoing']
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("""UPDATE employee.learner SET courses_ongoing = %s
-                WHERE emp_id = %s """,
-                (courses_ongoing, emp_id))
+    cur.execute("""SELECT courses_ongoing,courses_completed FROM employee.learner WHERE emp_id = %s""",(emp_id))
+    result = cur.fetchall()
+
+    courses_ongoing = result[0]["courses_ongoing"].split(',')
+    courses_ongoing = list(map(int, courses_ongoing))
+    courses_completed = result[0]["courses_completed"].split(',')
+    courses_completed = list(map(int, courses_completed))
+
+    for i in courses_ongoing:
+        if course_id == i:
+            courses_ongoing.remove(i)
+
+    courses_completed.append(course_id)
+    courses_ongoing = str(courses_ongoing).strip('][')
+    courses_completed = str(courses_completed).strip('][')
+
+    cur.execute("""UPDATE employee.learner SET courses_ongoing = %s, courses_completed = %s WHERE emp_id = %s """,
+    (courses_ongoing,courses_completed,emp_id))
     # commit the command
     conn.commit()
 
     # close sql connection
     cur.close()
 
-    return("Successfully update ongoing courses"), 200
-
-# update learner courses_completed
-
-
-@app.route('/update_learner_completed', methods=['PUT'])
-def update_learner_completed():
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    emp_id = request.json['emp_id']
-    courses_completed = request.json['courses_completed']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""UPDATE employee.learner SET courses_completed = %s
-                WHERE emp_id = %s """,
-                (courses_completed, emp_id))
-    # commit the command
-    conn.commit()
-
-    # close sql connection
-    cur.close()
-
-    return("Successfully update completed courses"), 200
+    return("successfully updated learner courses"), 200
 
 # update learner courses_badge
 
