@@ -36,7 +36,8 @@ CREATE TABLE course.course (
   course_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   course_name VARCHAR (255),
   course_desc VARCHAR (255),
-  pre_req VARCHAR (255)
+  pre_req VARCHAR (255),
+  course_active VARCHAR (255)
 );
 
 CREATE TABLE IF NOT EXISTS course.class (
@@ -45,7 +46,6 @@ CREATE TABLE IF NOT EXISTS course.class (
   emp_id int NOT NULL, 
   emp_name VARCHAR (255),
   course_id int NOT NULL,
-  course_name VARCHAR (255),
   start_date date, 
   end_date date,
   start_enrol date, 
@@ -68,7 +68,6 @@ CREATE TABLE IF NOT EXISTS course.pending_enrolment (
   emp_id int NOT NULL,
   emp_name VARCHAR (255),
   course_id int NOT NULL,
-  course_name VARCHAR (255),
   class_id int NOT NULL,
   pending_status VARCHAR (255),
   CONSTRAINT pk_pending PRIMARY KEY (emp_id, class_id, course_id),
@@ -82,7 +81,7 @@ CREATE DATABASE IF NOT EXISTS employee;
 CREATE TABLE IF NOT EXISTS employee.employee (
   emp_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   emp_name VARCHAR (255) NOT NULL,
-  password VARCHAR (255),
+  emp_password VARCHAR (255),
   email VARCHAR (255),
   phone int(8),
   dept VARCHAR (255)
