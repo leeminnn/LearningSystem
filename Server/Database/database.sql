@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS course.class (
   emp_id int NOT NULL, 
   emp_name VARCHAR (255),
   course_id int NOT NULL,
+  seat_left int, 
   start_date date, 
   end_date date,
   start_enrol date, 
@@ -60,6 +61,7 @@ CREATE TABLE IF NOT EXISTS course.class_list (
   progress VARCHAR (255),
   class_status VARCHAR (255),
   ungraded_result VARCHAR (255),
+  graded_result VARCHAR (255),
   CONSTRAINT PK_learner PRIMARY KEY (emp_id, class_id),
   CONSTRAINT learner_fk_class FOREIGN KEY (class_id) REFERENCES class(class_id)
 );
