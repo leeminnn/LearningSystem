@@ -1,0 +1,57 @@
+.home_body {
+  margin: 30px 30px;
+}
+
+.list_course {
+  margin: 30px;
+}
+
+.user_dropdown {
+  display: inline-flex;
+  align-items: center;
+  float: right;
+}
+
+.side_menu {
+  width: 25%;
+  max-width: 300px;
+  border-right: solid black 1px;
+  height: 100%;
+  text-align: center;
+  float: left;
+}
+
+.main_container {
+  margin: 50px 50px 20px 50px;
+  border: solid black 1px;
+  height: 80vh;
+}
+
+.title {
+  text-align: center;
+}
+
+.section_details {
+  width: 74%;
+  text-align: center;
+  height: 100%;
+  float: right;
+  overflow-y: scroll;
+}
+
+.Learner_Nav {
+  height: 100px;
+  background-color: #3b646c;
+  padding: 20px 100px;
+  margin-bottom: 50px;
+  color: white;
+  position: relative;
+}
+
+.question {
+  margin-top: 20px;
+}
+
+.quiz {
+  margin: 20px 50px;
+}

@@ -58,19 +58,39 @@ def all_employee():
     return jsonify(result), 200
 
 
-@app.route("/get_learners", methods=['GET'])
+@app.route("/get_learners", methods=['POST'])
 def get_learners():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+    final = []
 
     conn = mysql.connect()
     cur = conn.cursor()
+    cur.execute(
+        """SELECT pre_req FROM course.course WHERE course_id=%s""", (course_id))
+    res = cur.fetchall()
+    if res[0]['pre_req'] != "No Prerequisite Course":
+        pre_req = str(res[0]['pre_req'])
+    else:
+        pre_req = course_id
+
     cur.execute("""SELECT * FROM employee.learner""")
     result = cur.fetchall()
     for i in result:
         i['emp_id'] = str(i['emp_id']).rjust(3, '0')
+        courseID = i['courses_ongoing'].split(',')
+        ccourseID = i['courses_completed'].split(',')
+        if (course_id not in courseID) and (course_id not in ccourseID) and (pre_req in ccourseID):
+            final.append(i)
+
     conn.commit()
+
     cur.close()
 
-    return jsonify(result), 200
+    return jsonify(final), 200
 
 # get all information of 1 employee
 

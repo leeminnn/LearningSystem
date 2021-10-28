@@ -1,8 +1,9 @@
 import React from 'react';
 import { BiUserCircle } from 'react-icons/bi';
-import './Style.css';
+import './Learner.css';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { Link } from "react-router-dom";
 
 function Nav() {
 
@@ -14,24 +15,41 @@ function Nav() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const emp_id = localStorage.getItem('emp_id')
     return (
-        <div>
-            <div className="user_dropdown">
-                <BiUserCircle size={40} onClick={handleClick}/>
-                <span onClick={handleClick}>Username</span>
+        <div className='Learner_Nav'>
+            <div style={{width: '80%', display: 'inline-block'}}>
+                <Link to={'/l/home'}
+                    style={{textDecoration: 'none', color: 'white'}}
+                >
+                    <h3>All-In-One</h3>
+                    <h3>Learning Management System</h3>
+                </Link>
             </div>
-            <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                'aria-labelledby': 'basic-button',
-                }}
-            >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
-            </Menu>
+            <div style={{float: 'right', marginTop:'50px'}}>
+                <div className="user_dropdown">
+                    <BiUserCircle size={40} onClick={handleClick}/>
+                    <span onClick={handleClick}>Employee ID: {emp_id}</span>
+                </div>
+                <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                    }}
+                >
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                    <Link to={'/'}
+                        style={{textDecoration: 'none', color: 'black'}}
+                    >
+                        <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    </Link>
+                </Menu>
+            </div>
+            
         </div>
         
     )
