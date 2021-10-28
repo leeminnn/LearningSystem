@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Course from './Course';
-import './Style.css';
+import LearnerCourseList from './LearnerCourseList';
+import './Learner.css';
 import Nav from './Nav';
 
 function LinkTab(props) {
@@ -18,18 +18,28 @@ function LinkTab(props) {
     );
 }
 
-function Home() {
+function LearnerHome() {
 
-    const [page, setPage] = useState(<Course/>)
+    const [page, setPage] = useState(<LearnerCourseList courses='all_courses'/>)
     const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+      if (newValue === 1){
+        setPage(<LearnerCourseList courses='eligible'/>)
+      } else if (newValue === 2) {
+        setPage(<LearnerCourseList courses='in_progress'/>)
+      } else if (newValue === 3 ) {
+        setPage(<LearnerCourseList courses='completed'/>)
+      } else if (newValue === 0 ) {
+        setPage(<LearnerCourseList courses='all_courses'/>)
+      }
+      setValue(newValue);
     };
 
     return (
-        <div className="home_body">
+        <div>
           <Nav/>
+          <div className="home_body">
              <Box sx={{ width: '100%' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="nav tabs example">
                     <LinkTab label="All" />
@@ -39,8 +49,9 @@ function Home() {
                 </Tabs>
             </Box>
             {page}
+          </div>
         </div>
     )
 }
 
-export default Home
+export default LearnerHome

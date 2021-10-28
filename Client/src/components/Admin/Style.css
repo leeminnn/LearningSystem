@@ -1,3 +1,107 @@
 .cards {
   text-align: center;
+  margin-top: 10px;
+}
+
+.Menu {
+  margin: 10px 30%;
+  justify-content: center;
+}
+
+.Nav_bar {
+  height: 100px;
+  background-color: #555555;
+  padding: 20px 100px;
+  margin-bottom: 10px;
+  color: white;
+  position: relative;
+}
+
+.course_box {
+  border: black solid 1px;
+  border-radius: 5px;
+  height: 200px;
+  margin: 30px 20%;
+  position: relative;
+}
+
+.header {
+  background-color: rgb(235, 233, 233);
+  height: 50px;
+}
+
+.text {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+  margin-left: 5%;
+}
+
+.content {
+  margin: 2% 5%;
+  margin-bottom: 70px;
+}
+
+.button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-right: 5%;
+  margin-bottom: 25px;
+}
+
+.approve_button {
+  position: absolute;
+  margin-left: -50px;
+  left: 50%;
+  width: 100px;
+  bottom: 0px;
+  margin-bottom: 2%;
+}
+
+.approve_box {
+  border: black solid 1px;
+  border-radius: 5px;
+  min-height: 130px;
+  margin: 30px 20%;
+  position: relative;
+}
+
+h4 {
+  margin: 5px 0;
+}
+
+.course_list {
+  border: 1px black solid;
+  border-radius: 5px;
+  margin: 30px 20%;
+  position: relative;
+}
+
+.table {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px black solid;
+  overflow-x: hidden;
+}
+
+.box_content {
+  margin: 2% 5%;
+}
+
+.date_picker {
+  margin: 20px 0;
+}
+
+.create_box {
+  border: black solid 1px;
+  border-radius: 5px;
+  margin: 30px 20%;
+  position: relative;
+}
+
+.pre_req {
+  margin-bottom: 20px;
 }

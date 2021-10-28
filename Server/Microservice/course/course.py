@@ -300,6 +300,8 @@ def eligible():
     emp_id = request.json['emp_id']
     final = []
     onGoing = []
+    pending = []
+    enrolled = []
 
     conn = mysql.connect()
     cur = conn.cursor()
@@ -321,6 +323,21 @@ def eligible():
         elif i == '':
             onGoing.append(i)
 
+    cur.execute(
+        """SELECT * FROM course.pending_enrolment WHERE emp_id=%s and pending_status='pending'""", (emp_id))
+    res = cur.fetchall()
+    for i in res:
+        pending.append(i['course_id'])
+    conn.commit()
+
+    for i in pending:
+        cur.execute(
+            """SELECT * FROM course.course WHERE course_id=%s and active='active'""", (i))
+        r = cur.fetchall()
+        r[0]['course_id'] = str(r[0]['course_id']).rjust(3, '0')
+        enrolled.append(r[0])
+        conn.commit()
+
     for i in course_completed:
         if i == '':
             cur.execute(
@@ -332,11 +349,12 @@ def eligible():
         conn.commit()
         for i in result:
             if i['course_id'] not in onGoing:
-                i['course_id'] = str(i['course_id']).rjust(3, '0')
-                final.append(i)
+                if i['course_id'] not in pending:
+                    i['course_id'] = str(i['course_id']).rjust(3, '0')
+                    final.append(i)
 
     cur.close()
-    return jsonify(final), 200
+    return jsonify({'eligible': final, 'Pending': enrolled}), 200
 
 # as a learner, get in progress
 
@@ -808,8 +826,8 @@ def enroll_engineer():
             "UPDATE course.pending_enrolment SET pending_status = 'Approval' WHERE emp_id =%s and class_id =%s;", (emp_id, class_id))
         cur.execute("""INSERT INTO course.class_list(emp_id, emp_name, class_id, class_status) VALUES (%s, %s, %s, %s)""",
                     (emp_id, emp_name, class_id, 'learner'))
+        conn.commit()
 
-    conn.commit()
     cur.close()
 
     return("Success"), 200
@@ -837,6 +855,28 @@ def pass_final_quiz():
 
     return("Success"), 200
 """
+
+@ app.route("/remove_pending", methods=['DELETE'])
+def remove_pending():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    course_id = request.json['course_id']
+    learner = request.json['learner']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    for i in range(len(learner)):
+        emp_id = learner[i]
+        cur.execute(
+            """DELETE FROM course.pending_enrolment WHERE emp_id=%s and course_id=%s""", (emp_id, course_id))
+        conn.commit()
+
+    cur.close()
+    return("Success"), 200
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
