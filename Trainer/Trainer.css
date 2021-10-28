@@ -1,0 +1,84 @@
+.Nav {
+  height: 100px;
+  background-color: #bb8716;
+  padding: 20px 100px;
+  margin-bottom: 50px;
+  color: white;
+  position: relative;
+}
+
+.quiz_details {
+  text-align: center;
+  height: 100%;
+}
+
+.section_contents {
+  margin-top: 50px;
+  position: relative;
+  width: 100%;
+}
+
+.title {
+  text-align: center;
+}
+
+.box {
+  width: 500px;
+  /* position: absolute; */
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  border: grey solid 3px;
+  height: 200px;
+  justify-content: space-evenly;
+  display: flex;
+  flex-direction: column;
+}
+
+.question {
+  margin: auto;
+  margin-bottom: 30px;
+}
+
+.quiz_content {
+  margin-left: 60px;
+  margin-top: 20px;
+  justify-content: center;
+  text-align: left;
+}
+
+.option {
+  margin-top: 10px;
+  width: 60%;
+}
+
+.main_container {
+  margin: 50px 50px 20px 50px;
+  border: solid black 1px;
+  height: 80vh;
+}
+
+.right_menu {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.list_course {
+  margin: 30px;
+}
+
+a:visited,
+a:active,
+a:focus,
+a:hover,
+a:link {
+  text-decoration: none;
+  color: black;
+}
+
+.side_menu {
+  overflow-y: scroll;
+}
