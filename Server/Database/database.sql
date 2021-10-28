@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS employee.learner (
   emp_name VARCHAR (255),
   courses_ongoing VARCHAR (255),
   courses_completed VARCHAR (255),
+  courses_incompleted VARCHAR (255),
   badge VARCHAR (255),
   CONSTRAINT learner_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
