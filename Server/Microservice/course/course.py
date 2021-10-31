@@ -87,8 +87,13 @@ def create_class():
     cur.execute("""INSERT INTO section.section(section_id, class_id, course_id) VALUES (%s, %s, %s)""",
                 (1, class_id, course_id))
     conn.commit()
-    cur.execute("""INSERT INTO section.quiz(section_id, class_id, course_id, quiz_type) VALUES (%s, %s, %s, %s)""",
-                (1, class_id, course_id, 'ungraded'))
+    cur.execute("""INSERT INTO section.quiz(section_id, class_id, course_id, total_mark, quiz_type) VALUES (%s, %s, %s, %s, %s)""",
+                (1, class_id, course_id, 0, 'ungraded'))
+    conn.commit()
+    quiz_id = str(course_id) + str(class_id)
+    quiz_id = int(quiz_id)
+    cur.execute("""INSERT INTO section.quiz(quiz_id, class_id, course_id, total_mark, quiz_type, time) VALUES ( %s, %s, %s, %s, %s, %s)""",
+                (quiz_id, class_id, course_id, 50, 'graded', 4200))
     conn.commit()
     cur.close()
 
@@ -753,6 +758,7 @@ def withdraw_learners():
 
     learners_array = request.json['learner']
     for i in learners_array:
+        print(i)
         emp_id = i['empid']
         cur.execute(
             "DELETE FROM course.class_list WHERE emp_id=%s and class_id=%s;", (emp_id, class_id))
@@ -831,7 +837,8 @@ def enroll_engineer():
     cur.close()
 
     return("Success"), 200
-"""
+
+
 @app.route('/pass_final_quiz', methods=['PUT'])
 def pass_final_quiz():
     if not request.json:
@@ -841,20 +848,39 @@ def pass_final_quiz():
 
     class_id = request.json['class_id']
     emp_id = request.json['emp_id']
-    quiz_mark = 78
+    result = request.json['result']
+    course_id = request.json['course_id']
+    course_id = str(request.json['course_id']).rjust(3, '0')
 
-    #check for marks
-    if quiz_mark > 50:
-"""
-        #cur.execute("""UPDATE course.class_list set final_quiz_result=%s WHERE emp_id=%s AND class_id=%s""",("Pass",emp_id,class_id))
-    #elif quiz_mark <= 50:
-        #cur.execute("""UPDATE course.class_list set final_quiz_result=%s WHERE emp_id=%s AND class_id=%s""",("Fail",emp_id,class_id))
-"""
+    cur.execute("""UPDATE course.class_list set graded_result=%s WHERE emp_id=%s AND class_id=%s""",
+                (result, emp_id, class_id))
     conn.commit()
+
+    if result == 'pass':
+        cur.execute(
+            """SELECT courses_ongoing FROM employee.learner WHERE emp_id=%s""", (emp_id))
+        result = cur.fetchall()
+        conn.commit()
+        ongoing = result[0]['courses_ongoing'].split(',')
+        string = ''
+        for i in ongoing:
+            if i != course_id:
+                string += ',' + i
+        string = string.strip(',')
+        cur.execute("""UPDATE employee.learner SET courses_ongoing = %s
+            WHERE emp_id = %s """,
+                    (string, emp_id))
+        conn.commit()
+
+        cur.execute("""UPDATE employee.learner SET courses_completed = concat(courses_completed, ',' , %s)
+            WHERE emp_id = %s """,
+                    (course_id, emp_id))
+        conn.commit()
+
     cur.close()
 
     return("Success"), 200
-"""
+
 
 @ app.route("/remove_pending", methods=['DELETE'])
 def remove_pending():
@@ -876,6 +902,27 @@ def remove_pending():
 
     cur.close()
     return("Success"), 200
+
+
+@ app.route("/class_info", methods=['POST'])
+def class_info():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+
+    class_id = request.json['class_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT * FROM course.class WHERE class_id=%s", (class_id))
+    result = cur.fetchall()
+
+    conn.commit()
+    cur.close()
+
+    return jsonify(result), 200
 
 
 if __name__ == "__main__":

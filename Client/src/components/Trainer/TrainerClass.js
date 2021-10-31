@@ -64,8 +64,13 @@ function TrainerClass() {
                             />
                         </ListItem>
                     </List>
-                    <div className='button'>
-                        <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/t/course/classes/" + e.target.value)}>View</Button>
+                    <div style={{display:'flex', margin: '2% 5%', justifyContent:'space-between'}}>
+                        <div style={{float:'left'}}>
+                            <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/t/course/classlist/" + e.target.value)}>View Class List</Button>
+                        </div>
+                        <div style={{float:'right'}}>
+                            <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/t/course/classes/" + e.target.value)}>View Class Materials</Button>
+                        </div>
                     </div>
                 </div>
             ))}

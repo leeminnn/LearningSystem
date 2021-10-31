@@ -19,11 +19,16 @@ function LinkTab(props) {
 }
 
 function TrainerHome() {
-    const [page, setPage] = useState(<TrainerCourseList/>)
+    const [page, setPage] = useState(<TrainerCourseList courses='ongoing'/>)
     const [value, setValue] = useState(0);
 
     const handleChange = (event, newValue) => {
-        setValue(newValue);
+      if (newValue === 1){
+        setPage(<TrainerCourseList courses='completed'/>)
+      } else if (newValue === 0) {
+        setPage(<TrainerCourseList courses='ongoing'/>)
+      }
+      setValue(newValue);
     };
 
     return (

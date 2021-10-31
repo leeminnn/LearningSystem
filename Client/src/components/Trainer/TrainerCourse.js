@@ -18,6 +18,7 @@ function TrainerCourse( {match}) {
     const [nextSection, setNextSection] = useState(1);
     const classID = match.params.id
     const [quizID, setQuizID] = useState('')
+    const [duration, setDuration] = useState(0)
 
     const course_id = localStorage.getItem('course_id');
 
@@ -94,6 +95,7 @@ function TrainerCourse( {match}) {
             })
             if (onSubmit.status === 200){
                 setQuizID(onSubmit.data.quiz_id)
+                setDuration(onSubmit.data.time)
                 console.log(onSubmit.data)
             }
             return onSubmit.status
@@ -142,12 +144,13 @@ function TrainerCourse( {match}) {
                     </List>
                 </div>
                 <div className='right_menu'>
-                    {sectionName =='Final Quiz' ? (
-                        <Quiz name={sectionName} classID/>
+                    {sectionName ==='Final Quiz' ? (
+                        <Quiz name={sectionName} quiz_id={parseInt(course_id.toString() + classID.toString())}/>
                     ) : (
                         <div style={{textAlign:'center'}}>
                             <TrainerCourseSection name={sectionName} materials={materials} classID={classID} courseID={course_id} show={false}/>
-                            <Quiz name={sectionName} classID={classID} quiz_id={quizID}/>
+                            {console.log(parseInt((duration % (60 * 60)) / 60))}
+                            <Quiz name={sectionName} classID={classID} quiz_id={quizID} currentHour={parseInt(duration / (60 * 60))} currentMin={parseInt((duration % (60 * 60)) / 60)}/>
                         </div>
                     )}
                 </div>

@@ -11,7 +11,7 @@ import Select from '@mui/material/Select';
 import axios from 'axios';
 
 
-function Quiz({name, classID, quiz_id}) {
+function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
 
     const [marks, setMarks] = useState(1);
     const [question, setQuestion] =useState();
@@ -20,15 +20,22 @@ function Quiz({name, classID, quiz_id}) {
     const [second, setSecond] = useState();
     const [third, setThird] = useState();
     const [questionQuiz, setQuestionQuiz] = useState([]);
-    const [quizID, setQuizID] = useState(quiz_id)
-    console.log(quiz_id)
-    const course_id = localStorage.getItem('course_id')
-    const class_id = classID
     const [count, setCount] = useState(0)
+    const [currentMarks, setCurrentMarks] = useState(0)
+    const [hour, setHour] = useState(0);
+    const [minutes, setMinutes] = useState(0);
 
     const handleChange = (event) => {
         setMarks(event.target.value);
     };
+
+    const handleHour = (event) => {
+        setHour(event.target.value);
+    };
+    const handleMinutes = (event) => {
+        setMinutes(event.target.value);
+    };
+
 
     async function handleSubmit(){
         let question_option = answer
@@ -49,20 +56,25 @@ function Quiz({name, classID, quiz_id}) {
             'mark': marks
         }
         console.log(formData)
+        if (name === 'Final Quiz') {
+            var URLink = 'http://localhost:5002/create_final_quiz_question';
+        } else {
+            var URLink = 'http://localhost:5002/create_question';
+        }
         try{
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://localhost:5002/create_question',
+              url: URLink,
               data: formData,
             })
             if (onSubmit.status === 200){
                 setMarks(1);
-                setQuestion();
-                setAnswer();
-                setFirst();
-                setSecond();
-                setThird();
+                setQuestion("");
+                setAnswer("");
+                setFirst("");
+                setSecond("");
+                setThird("");
                 setCount(count+1)
             }
         }
@@ -70,6 +82,28 @@ function Quiz({name, classID, quiz_id}) {
           console.log(err);
         }
     };
+
+    async function submitTime(){
+        let duration = (hour * 3600 ) + (minutes*60)
+        try{
+            const onSubmit =
+              await axios({
+                method: 'post',
+                url: 'http://localhost:5002/update_quiz_time',
+                data: {
+                  quiz_id : quiz_id,
+                  time : duration
+                },
+              })
+              if (onSubmit.status === 200){
+                  console.log(onSubmit.data)
+              }
+              return onSubmit.status
+          }
+          catch (err) {
+            console.log(err);
+          }
+    }
 
     async function getQuestions(){
         try{
@@ -84,36 +118,101 @@ function Quiz({name, classID, quiz_id}) {
               if (onSubmit.status === 200){
                 const myList = onSubmit.data
                 let temp = []
-                for (let i = 0, len = myList.length, text = ""; i < len; i++){
+                let marks = 0
+                for (let i = 0, len = myList.length; i < len; i++){
                     console.log(myList[i])
+                    marks += myList[i]['mark']
                     temp.push(myList[i])
                 }
                 setQuestionQuiz(temp)
+                setCurrentMarks(marks)
               }
-              return onSubmit.status
           }
           catch (err) {
             console.log(err);
           }
     }
-    console.log(questionQuiz)
-    useEffect(() => getQuestions(), [quiz_id])
+    
+    useEffect(() => {
+        getQuestions();
+        console.log(currentMin)
+        if (parseInt(currentMin) > 0){
+            setMinutes(parseInt(currentMin));
+        }
+        if (parseInt(currentHour) > 0){
+            setHour(parseInt(currentHour));
+        }
+
+    }, [quiz_id])
+
     useEffect(() => getQuestions(), [count])
     return (
         <div className='quiz_details'>
             {name !== '' &&
                 <div className='section_contents'>
-                    {name === 'Final Quiz' && <h2>{name}</h2>}
-                    <div>
+                    {name === 'Final Quiz' && 
+                        <div>
+                            <h2>{name}</h2>
+                            {currentMarks <50 ? (
+                                <h3>You need {50 - currentMarks} more marks</h3>
+                            ) : currentMarks === 50 ? (
+                                <h3>Stop adding questions</h3>
+                            ) : (
+                                <h3>You have exceeded by {currentMarks - 50} marks</h3>
+                            )}
+                        </div>
+                    }
+                    <div style={{textAlign:'left', marginLeft:'10%'}}>
                         {questionQuiz.map((entry, index) => 
                             <div>
                                 <h5>Question {index +1}</h5>
                                 <div>Question Description : {entry.quiz_desc}</div>
                                 <div>Question Answer : {entry.quiz_ans}</div>
                                 <div> Question Options : {entry.question_option}</div>
+                                <div> Marks : {entry.mark}</div>
                             </div>
                         )}
                     </div>
+                    { name!== 'Final Quiz' && (
+                        <div style={{marginLeft:'10%', marginTop:'3%', textAlign:'left'}}>
+                            Enter duration of Quiz:
+                            <div style={{display:'flex', alignItems:'center', marginTop:'10px'}}>
+                                <Box sx={{ minWidth: 120 }}>
+                                    <FormControl fullWidth>
+                                        <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={hour}
+                                        onChange={handleHour}
+                                        >
+                                        {Array.from(Array(2), (e, i) => {
+                                            return <MenuItem value={i}>{i}</MenuItem>
+                                        })}
+                                        </Select>
+                                    </FormControl>
+                                </Box> Hour(s)
+                                <Box sx={{ minWidth: 120 }}>
+                                    <FormControl fullWidth>
+                                        <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        value={minutes}
+                                        onChange={handleMinutes}
+                                        >
+                                        {Array.from(Array(60), (e, i) => {
+                                            return <MenuItem value={i}>{i}</MenuItem>
+                                        })}
+                                        </Select>
+                                    </FormControl>
+                                </Box> Minutes(s)
+                                <Button variant="contained" color="success" onClick={submitTime}>
+                                    Enter
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                    
+                    
                     <div style={{marginBottom: '30px', marginTop: '30px'}}>
                         <Divider/>
                     </div>

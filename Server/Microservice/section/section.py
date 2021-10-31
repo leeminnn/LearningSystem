@@ -62,6 +62,11 @@ def create_quiz():
                 (quiz_id, ques_desc, quiz_ans, question_option, mark))
     result = cur.fetchall()
     conn.commit()
+
+    cur.execute("""UPDATE section.quiz SET total_mark = total_mark +%s WHERE quiz_id=%s;""",
+                (mark, quiz_id))
+    conn.commit()
+
     cur.close()
 
     return jsonify(result), 200
@@ -174,14 +179,14 @@ def get_quiz_id():
     conn = mysql.connect()
     cur = conn.cursor()
     if section_id != " ":
-        cur.execute("""SELECT quiz_id, total_mark FROM section.quiz WHERE quiz_type='ungraded' and section_id=%s and class_id=%s and course_id=%s""",
+        cur.execute("""SELECT quiz_id, total_mark, time FROM section.quiz WHERE quiz_type='ungraded' and section_id=%s and class_id=%s and course_id=%s""",
                     (section_id, class_id, course_id))
         result = cur.fetchall()
         conn.commit()
         cur.close()
 
     else:
-        cur.execute("""SELECT quiz_id, total_mark FROM section.quiz WHERE quiz_type='graded' and class_id=%s and course_id=%s""",
+        cur.execute("""SELECT quiz_id, total_mark, time FROM section.quiz WHERE quiz_type='graded' and class_id=%s and course_id=%s""",
                     (class_id, course_id))
         result = cur.fetchall()
         conn.commit()
@@ -190,6 +195,7 @@ def get_quiz_id():
     if len(result) > 0:
         final['quiz_id'] = result[0]['quiz_id']
         final['total_mark'] = result[0]['total_mark']
+        final['time'] = result[0]['time']
 
     return jsonify(final), 200
 
@@ -362,6 +368,51 @@ def get_questions():
         i['question_option'] = new_temp
 
     conn.commit()
+    cur.close()
+
+    return jsonify(result), 200
+
+
+@app.route("/create_final_quiz_question", methods=['POST'])
+def create_final_quiz_question():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    quiz_id = request.json['quiz_id']
+    ques_desc = request.json['question']
+    quiz_ans = request.json['answer']
+    question_option = request.json['question_option']
+    mark = request.json['mark']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""INSERT INTO section.question(quiz_id, quiz_desc, quiz_ans, question_option, mark) VALUES (%s, %s, %s, %s, %s)""",
+                (quiz_id, ques_desc, quiz_ans, question_option, mark))
+    result = cur.fetchall()
+    conn.commit()
+
+    cur.close()
+
+    return jsonify(result), 200
+
+
+@app.route("/update_quiz_time", methods=['POST'])
+def update_quiz_time():
+
+    if not request.json:
+        return("Invalid body request."), 400
+
+    quiz_id = request.json['quiz_id']
+    time = request.json['time']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""UPDATE section.quiz SET time=%s  WHERE quiz_id = %s""",
+                (time, quiz_id))
+    result = cur.fetchall()
+    conn.commit()
+
     cur.close()
 
     return jsonify(result), 200

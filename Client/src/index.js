@@ -15,6 +15,7 @@ import CreateClass from './components/Admin/Class/CreateClass';
 import LearnerClass from './components/Learner/LearnerClass';
 import TrainerClass from './components/Trainer/TrainerClass';
 import LearnerEnrol from './components/Learner/LearnerEnrol';
+import TrainerClassList from './components/Trainer/TrainerClassList';
 import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
 ReactDOM.render(
@@ -32,6 +33,7 @@ ReactDOM.render(
         ## trainer paths
         <Route path ="/t/home" component={TrainerHome}/>
         <Route path ="/t/course/class" component={TrainerClass}/>
+        <Route path ="/t/course/classlist/:id" component={TrainerClassList}/>
         <Route path ="/t/course/classes/:id" component={TrainerCourse}/>
 
         ## admin paths
