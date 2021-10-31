@@ -50,6 +50,30 @@ function ClassList( {match} ) {
     const [pending, setPending] = useState([])
     const [totalLearners, setTotalLearners] = useState('');
     const availLearners = localStorage.getItem('intake');
+    const today = new Date();
+    const [disableButton, setDisableButton] = useState(false);
+
+
+    async function getClassInfo() {
+        try{
+            const onSubmit =
+              await axios({
+                method: 'post',
+                url: 'http://localhost:5000/class_info',
+                data: { class_id: match.params.id},
+            })
+            if (onSubmit.status === 200){
+                if (today.getTime() >= new Date(onSubmit.data[0].end_date).getTime()) {
+                    setDisableButton(true)
+                }
+            }
+            return onSubmit.status
+        }
+        catch (err) {
+            console.log(err);
+        }
+    };
+
 
     async function getPendingList() {
         try{
@@ -110,7 +134,6 @@ function ClassList( {match} ) {
             })
             if (onSubmit.status === 200){
                 setTotalLearners(onSubmit.data.length)
-                console.log(onSubmit.data)
                 let tempList = onSubmit.data
                 let temp = []
                 for (let i = 0, len = tempList.length; i < len; i++){
@@ -129,8 +152,7 @@ function ClassList( {match} ) {
         }
     };
 
-    useEffect(() => {getClassList(); getPendingList()}, [])
-    console.log(pending)
+    useEffect(() => {getClassInfo(); getClassList(); getPendingList()}, [])
 
 
     const selectLearners = (ids) => {
@@ -161,12 +183,9 @@ function ClassList( {match} ) {
             delete approvee[event.target.value[0]]; 
         }
     };
-
-    console.log(approvee)
     
     async function withdraw() {
         let data = {learner: selected, class_id: match.params.id, course_id: courseID}
-        console.log(data)
         try{
           const onSubmit =
             await axios({
@@ -326,8 +345,6 @@ function ClassList( {match} ) {
         }
     }
 
-    console.log(learner)
-
     return (
         <div>
             <Nav/>
@@ -336,7 +353,7 @@ function ClassList( {match} ) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent:'space-evenly', marginBottom:'20px'}}>
                 <div style={{float:'left'}}>
-                    <Button onClick={()=>setOpenApprove(true)} size="small" color="success" variant="contained">Pending Approval</Button>
+                    <Button onClick={()=>setOpenApprove(true)} size="small" color="success" variant="contained" disabled={disableButton} >Pending Approval</Button>
                     <Modal
                         open={openApprove}
                         onClose={()=>setOpenApprove(false)}

@@ -8,6 +8,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 import Nav from './Nav';
 import DisplayQuiz from './DisplayQuiz';
 import axios from 'axios';
+import Button from '@mui/material/Button';
 
 const style = {
     width: '100%',
@@ -26,6 +27,7 @@ function LearnerCourse({match}) {
     const [quiz_id, setQuizID] = useState('')
     const [questionQuiz, setQuestionQuiz] = useState([]);
     const [sectionID, setSectionID] = useState('')
+    const [open, setOpen] = useState(false);
 
     async function getQuizID(e){
         try{
@@ -50,7 +52,7 @@ function LearnerCourse({match}) {
         }
     };
 
-    async function getQuestions(){
+    async function getQuestions(e){
         try{
             const onSubmit =
               await axios({
@@ -76,8 +78,7 @@ function LearnerCourse({match}) {
           }
     }
     useEffect(() => getQuestions(), [quiz_id])
-    console.log(questionQuiz)
-    console.log(quiz_id)
+
     async function getSectionList(){
         try{
             const onSubmit =
@@ -120,7 +121,14 @@ function LearnerCourse({match}) {
     };
 
     useEffect(() => {getSectionList(); getProgress()}, [])
-    console.log(quiz_id['quiz_id'])
+    
+    
+    const startQuiz = () => {
+        setOpen(!open)
+    }
+
+    console.log(quiz_id)
+
     return (
         <div>
             <Nav/>
@@ -154,7 +162,8 @@ function LearnerCourse({match}) {
                             <ListItem button onClick={()=> {
                                 setSectionName('Final Quiz');
                                 setDesc("You have 30 minutes to complete this quiz which would determine your final grade for this module.")
-                                getQuizID(" ")
+                                setQuizID({quiz_id : parseInt(course_id.toString() + match.params.id.toString()), total_marks : 50, time: 4200})
+                                setSectionID("")
 
                             }}>
                                 <ListItemText style={{textAlign:'center'}} primary="Final Quiz" />
@@ -166,9 +175,21 @@ function LearnerCourse({match}) {
                     <h3>{sectionName}</h3>
                     <h4>{desc}</h4>
                     { sectionName != 'Final Quiz' && (
-                        <a href={materials}>{materials}</a>
+                        <div>
+                            <a href={materials}>{materials}</a>
+                        </div>
                     )}
-                    <DisplayQuiz quiz_id={quiz_id} quiz_num={quiz_id['quiz_id']} questions={questionQuiz} class_id={match.params.id} section_id={sectionID}/>
+                    { sectionName != '' && (
+                        open  ? (
+                            <DisplayQuiz quiz_id={quiz_id} quiz_num={quiz_id['quiz_id']} questions={questionQuiz} class_id={match.params.id} section_id={sectionID} time={quiz_id['time']}/>
+                        ) : (
+                            <div>
+                                <Button variant="contained" color="success" onClick={startQuiz}>
+                                    Start Quiz
+                                </Button>
+                            </div>
+                        )
+                    )}
                 </div>
             </div>
         </div>

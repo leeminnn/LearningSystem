@@ -10,6 +10,9 @@ import './Learner.css';
 import axios from 'axios';
 
 function LearnerClass() {
+
+    const today = new Date();
+    // console.log(today)
     const courseName = localStorage.getItem("course_name");
     const [classList, setClassList] = useState([])
     const courseID = localStorage.getItem("course_id");
@@ -34,8 +37,27 @@ function LearnerClass() {
         }
     };
 
+    async function withdraw(class_id) {
+        let data = {learner: [{empid: emp_id}], class_id:class_id, course_id: courseID}
+        console.log(data)
+        try{
+          const onSubmit =
+            await axios({
+              method: 'delete',
+              url: 'http://localhost:5000/withdraw_learners',
+              data: data,
+            })
+            if (onSubmit.status === 200){
+                history.push("/l/home")
+            }
+            return onSubmit.status
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
     useEffect(() => getClassList(), [])
-    console.log(classList)
 
     return (
         <div>
@@ -65,6 +87,11 @@ function LearnerClass() {
                             />
                         </ListItem>
                     </List>
+                    {(today.getTime() < (new Date(entry.end_date).getTime())) && (
+                        <div style={{marginLeft:"5%", marginBottom: '2%'}}>
+                            <Button variant="contained" color='error' value={entry.class_id} onClick={(e) =>withdraw(e.target.value)}>Withdraw</Button>
+                        </div>
+                    )}
                     <div className='button'>
                         <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/l/course/classes/" + e.target.value)}>View</Button>
                     </div>

@@ -11,7 +11,6 @@ import axios from 'axios';
 import './Learner.css';
 
 
-
 const style = {
     position: 'absolute',
     top: '50%',
@@ -24,18 +23,20 @@ const style = {
     p: 4,
 };
 
-function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id}) {
+function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time}) {
     const quiz = [quiz_id];
-    console.log(quiz_num)
-    console.log(questions)
+    console.log(section_id)
     const [check, setCheck] = useState({});
     const [open, setOpen] = useState(false);
     const course_id = localStorage.getItem('course_id')
     const emp_id = localStorage.getItem('emp_id')
-    // const totalMarks = parseInt(quiz_id['quiz_id'][quiz_id['quiz_id'].length - 1]);
-    const totalMarks = 50;
+    const totalMarks = (quiz_id['total_mark']);
     const [finalScore, setFinalScore] = useState('');
     const [message, setMessage] = useState('');
+    const [seconds, setSeconds] = useState(time);
+    const [hours, setHours] = useState(0);
+    const [mins, setMins] = useState(0);
+    const [sec, setSecs] = useState(0);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -47,27 +48,38 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id}) {
         for (const i in check) {
             score+=check[i];
         }
-        console.log(totalMarks/2)
         setFinalScore(score)
-        if (score < (totalMarks/2)) {
+        if (score < (totalMarks*0.85)) {
             setMessage("You have fail the quiz")
+            var result = "fail"
         }
         else {
             setMessage("You have pass the quiz")
-        }
-        
-        let data = {
-            section_id : section_id,
-            emp_id : emp_id,
-            class_id : class_id,
-            course_id : course_id
+            var result = "pass"
         }
         console.log(data)
+        if (section_id!== "") {
+            var data = {
+                section_id : section_id,
+                emp_id : emp_id,
+                class_id : class_id,
+                course_id : course_id
+            }
+            var URLink = 'http://localhost:5002/update_progress'
+        } else{
+            var data = {
+                emp_id : emp_id,
+                class_id : class_id,
+                result: result,
+                course_id : course_id
+            }
+            var URLink = 'http://localhost:5000/pass_final_quiz'
+        }
         try{
             const onSubmit =
               await axios({
                 method: 'put',
-                url: 'http://localhost:5002/update_progress',
+                url: URLink,
                 data: data,
               })
               if (onSubmit.status === 200){
@@ -95,10 +107,26 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id}) {
         }
     }
 
-    console.log(totalMarks/2)
+    useEffect(() => {
+        if (seconds > 0) {
+            setTimeout(() => setSeconds(seconds - 1), 1000);
+            setHours(Math.floor(seconds / (60 * 60)))
+            setMins(Math.floor((seconds % (60 * 60)) / 60))
+            setSecs(Math.ceil((seconds % (60 * 60)) % 60 ))
+        } else {
+            setSeconds('BOOOOM!');
+            submitQuiz()
+        }
+    });
+    
+
+    console.log(totalMarks*0.85)
 
     return (
         <div>
+            <div>
+                {hours} hours {mins} minutes {sec} seconds
+            </div>
             <div className='quiz'>
                 { quiz_num != undefined &&
                     <div>
