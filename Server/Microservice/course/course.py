@@ -903,6 +903,43 @@ def remove_pending():
     cur.close()
     return("Success"), 200
 
+@ app.route("/ended_classes", methods=['GET'])
+def ended_classes():
+    
+
+    dt_string = datetime.now().date()
+    #dt_string = today.strftime("%d/%m/%Y")
+    print(dt_string)
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT course_id,class_id FROM course.class WHERE end_date < %s", (dt_string))
+    result = cur.fetchall()
+
+    conn.commit()
+    cur.close()
+
+    return jsonify(result), 200
+
+@ app.route("/check_class_list/<int:class_id>", methods=['GET'])
+def check_class_list(class_id):
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+
+    cur.execute("""SELECT class_list.emp_id,class_list.class_id,class.course_id,
+                    class_list.progress,class_list.class_status,
+                    class_list.graded_result FROM course.class_list 
+                    INNER JOIN course.class ON class.class_id = class_list.class_id 
+                    WHERE class_list.class_id=%s;""", (class_id))
+    result = cur.fetchall()
+
+    conn.commit()
+    cur.close()
+
+    return jsonify(result), 200
 
 @ app.route("/class_info", methods=['POST'])
 def class_info():
