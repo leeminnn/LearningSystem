@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS section.quiz (
   section_id int,
   class_id int,
   course_id int,
-  total_mark int, 
+  total_mark int DEFAULT '0', 
+  quiz_time int,
   quiz_type VARCHAR (255),
   FOREIGN KEY (section_id, class_id, course_id) REFERENCES section(section_id, class_id, course_id)
 );
