@@ -378,6 +378,52 @@ def update_learner_badge():
 
     return("Successfully update learner badge"), 200
 
+# update learner courses_ongoing
+
+
+@app.route('/update_to_incomplete', methods=['PUT'])
+def update_to_incomplete():
+    # check for body request
+    if not request.json:
+        return("Invalid body request."), 400
+    
+    course_id = int(request.json['course_id'])
+    emp_id = request.json['emp_id']
+
+    conn = mysql.connect()
+    cur = conn.cursor()
+    cur.execute("""SELECT courses_ongoing,courses_incompleted FROM employee.learner WHERE emp_id = %s""",(emp_id))
+    result = cur.fetchall()
+
+    if result[0]["courses_ongoing"] !="":
+        courses_ongoing = result[0]["courses_ongoing"].split(',')
+        print(courses_ongoing)
+        courses_ongoing = list(map(int, courses_ongoing))
+    else:
+        courses_ongoing = []
+    if result[0]["courses_incompleted"] !="":
+        courses_incompleted = result[0]["courses_incompleted"].split(',')
+        courses_incompleted = list(map(int, courses_incompleted))
+    else:
+        courses_incompleted=[]
+
+    for i in courses_ongoing:
+        if course_id == i:
+            courses_ongoing.remove(i)
+
+    courses_incompleted.append(course_id)
+    courses_ongoing = str(courses_ongoing).strip('][')
+    courses_incompleted = str(courses_incompleted).strip('][')
+
+    cur.execute("""UPDATE employee.learner SET courses_ongoing = %s, courses_incompleted = %s WHERE emp_id = %s """,
+    (courses_ongoing,courses_incompleted,emp_id))
+    # commit the command
+    conn.commit()
+
+    # close sql connection
+    cur.close()
+
+    return("successfully updated learner courses"), 200
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
