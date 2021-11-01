@@ -59,7 +59,7 @@ function HomePage () {
 
                             <Link to ='/course/classes'
                             style={{textDecoration: 'none'}}>
-                                <Button onClick={() => nextPage({entry})} variant="contained">View</Button>
+                                <Button onClick={() => nextPage({entry})} variant="contained">View Classes</Button>
                             </Link>
                         </div>
                     </div>

@@ -79,13 +79,16 @@ function LearnerCourseList({courses}) {
                         <p>Description: {entry['course_desc']}</p>
                     </div>
                 ))}
-                {pending.map(entry => (
-                    <div style={{marginTop:'50px'}}>
-                        <h3>({entry['course_id']})   {entry['course_name']}</h3>
-                        <p>Pre-Requisite course: {entry['pre_req']}</p>
-                        <p>Description: {entry['course_desc']}</p>
-                    </div>
-                ))}
+                { courses === 'eligible' &&
+                    pending.map(entry => (
+                        <div style={{marginTop:'50px'}}>
+                            <h3>({entry['course_id']})   {entry['course_name']}</h3>
+                            <p>Pre-Requisite course: {entry['pre_req']}</p>
+                            <p>Description: {entry['course_desc']}</p>
+                        </div>
+                    ))
+                }
+               
         </div>
     )
 }

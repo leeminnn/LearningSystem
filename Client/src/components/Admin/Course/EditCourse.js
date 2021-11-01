@@ -97,12 +97,22 @@ function EditCourse(props) {
     };
 
     async function save(){
-        let data = {
-            course_id: id,
-            course_name: courseName,
-            course_desc: desc,
-            pre_req : courseID
+        if (prereq == "No Prerequisite Course") {
+            var data = {
+                course_id: id,
+                course_name: courseName,
+                course_desc: desc,
+                pre_req : prereq
+            }
+        } else {
+            var data = {
+                course_id: id,
+                course_name: courseName,
+                course_desc: desc,
+                pre_req : courseID
+            }
         }
+        
         console.log(data)
         try{
           const onSubmit =
@@ -146,7 +156,6 @@ function EditCourse(props) {
                         <div>
                             <div style={{display:'flex', alignItems:'center', marginBottom:'20px'}}>
                                 <div style={{marginRight: '20px', width: '150px'}}>Prerequisite course:</div>
-                                {/* <TextField id="standard-basic" variant="standard" fullWidth value={prereq} onChange={(e)=>setPrereq(e.target.value)}/> */}
                                 <Autocomplete
                                     disablePortal
                                     id="Prerequisites"
