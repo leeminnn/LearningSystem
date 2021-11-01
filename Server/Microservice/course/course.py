@@ -1,9 +1,7 @@
-import requests
 from datetime import datetime
 from flask import jsonify, Flask, request
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
-import time
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -19,34 +17,7 @@ mysql = MySQL(app, cursorclass=DictCursor)
 mysql.init_app(app)
 
 
-# HR create new course
-@app.route('/create_course', methods=['POST'])
-def create_course():
-
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-    course_name = request.json['course_name']
-    course_desc = request.json['course_desc']
-    pre_req = request.json['pre_req']
-
-    if pre_req == "":
-        pre_req = "No Prerequisite Course"
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""INSERT INTO course.course(course_id, course_name, course_desc, pre_req) VALUES (%s, %s, %s, %s)""",
-                (course_id, course_name, course_desc, pre_req))
-
-    conn.commit()
-    cur.close()
-
-    return("Successfully Create Course"), 200
-
 # HR Create new class to assign trainers after creating a new course
-
-
 @app.route('/create_class', methods=['POST'])
 def create_class():
     # check for body request
@@ -132,7 +103,7 @@ def all_courses():
 
     conn = mysql.connect()
     cur = conn.cursor()
-    cur.execute("SELECT * FROM course.course WHERE active='active'")
+    cur.execute("SELECT * FROM course.course WHERE course_active='active'")
 
     result = cur.fetchall()
     for i in result:
@@ -160,15 +131,14 @@ def enrol():
     emp_id = request.json['emp_id']
     emp_name = request.json['emp_name']
     course_id = request.json['course_id']
-    course_name = request.json['course_name']
     class_id = request.json['class_id']
     pending_status = "pending"
 
     conn = mysql.connect()
     cur = conn.cursor()
 
-    cur.execute("""INSERT INTO course.pending_enrolment(emp_id, emp_name, course_id, course_name, class_id, pending_status) VALUES (%s, %s, %s, %s, %s, %s)""",
-                (emp_id, emp_name, course_id, course_name, class_id, pending_status))
+    cur.execute("""INSERT INTO course.pending_enrolment(emp_id, emp_name, course_id, class_id, pending_status) VALUES (%s, %s, %s, %s, %s)""",
+                (emp_id, emp_name, course_id, class_id, pending_status))
 
     conn.commit()
     cur.close()
@@ -218,38 +188,14 @@ def remove_course():
     conn = mysql.connect()
     cur = conn.cursor()
     cur.execute(
-        """UPDATE course.course SET active = 'inactive' WHERE course_id=%s""", (course_id))
+        """UPDATE course.course SET course_active = 'inactive' WHERE course_id=%s""", (course_id))
+    conn.commit()
+    cur.execute(
+        """ALTER TABLE course.course AUTO_INCREMENT=1""")
     conn.commit()
     cur.close()
 
     return("Successfully delete course"), 200
-
-# approve learner enrolment
-
-
-@app.route('/approve_learner', methods=['PUT'])
-def approve_learner():
-
-    if not request.json:
-        return("Invalid body request."), 400
-
-    pending_status = 'approve'
-    emp_id = request.json['emp_id']
-    class_id = request.json['class_id']
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""UPDATE course.pending_enrolment SET pending_status = %s
-                WHERE emp_id = %s AND class_id = %s AND course_id=%s""",
-                (pending_status, emp_id, class_id, course_id))
-
-    conn.commit()
-    cur.close()
-
-    return("Successfully update learner's pending enrolment status"), 200
-
-# as a learner & trainer, able to view course progress
 
 
 @app.route("/learner_progress", methods=['POST'])
@@ -337,7 +283,7 @@ def eligible():
 
     for i in pending:
         cur.execute(
-            """SELECT * FROM course.course WHERE course_id=%s and active='active'""", (i))
+            """SELECT * FROM course.course WHERE course_id=%s and course_active='active'""", (i))
         r = cur.fetchall()
         r[0]['course_id'] = str(r[0]['course_id']).rjust(3, '0')
         enrolled.append(r[0])
@@ -346,17 +292,17 @@ def eligible():
     for i in course_completed:
         if i == '':
             cur.execute(
-                """SELECT * FROM course.course WHERE pre_req='No Prerequisite Course' and active='active'""")
+                """SELECT * FROM course.course WHERE pre_req='No Prerequisite Course' and course_active='active'""")
         else:
             cur.execute(
-                """SELECT * FROM course.course WHERE pre_req=%s and active='active'""", (i))
+                """SELECT * FROM course.course WHERE pre_req=%s and course_active='active'""", (i))
         result = cur.fetchall()
         conn.commit()
-        for i in result:
-            if i['course_id'] not in onGoing:
-                if i['course_id'] not in pending:
-                    i['course_id'] = str(i['course_id']).rjust(3, '0')
-                    final.append(i)
+    for i in result:
+        if i['course_id'] not in onGoing:
+            if i['course_id'] not in pending:
+                i['course_id'] = str(i['course_id']).rjust(3, '0')
+                final.append(i)
 
     cur.close()
     return jsonify({'eligible': final, 'Pending': enrolled}), 200
@@ -517,107 +463,6 @@ def pending_approval():
     cur = conn.cursor()
 
     cur.execute("SELECT * FROM course.pending_enrolment WHERE course_id=%s AND class_id =%s AND pending_status='pending'", (course_id, class_id))
-
-    result = cur.fetchall()
-    conn.commit()
-    cur.close()
-    return jsonify(result), 200
-
-# Get list of course_id of ineligible courses -- KIV
-
-
-@ app.route("/ineligible_courses", methods=['POST'])
-def ineligible_courses():
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT * FROM course.course WHERE course_id=%s", (course_id))
-
-    result = cur.fetchall()
-    conn.commit()
-    cur.close()
-    return jsonify(result), 200
-
-# Learner to view selected classes during certain period
-
-
-@ app.route('/selected_date', methods=['POST'])
-def selected_date():
-
-    date = time.strftime("%Y-%m-%d")
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute(
-        """SELECT * FROM course.class WHERE %s BETWEEN start_date AND end_date""", [date])
-
-    result = cur.fetchall()
-    conn.commit()
-    cur.close()
-    return jsonify(result), 200
-
-# update learner's or trainer's class_list status to withdraw or completed:
-
-
-@ app.route('/update_status', methods=['PUT'])
-def update_status():
-
-    if not request.json:
-        return ("Invalid body request."), 400
-
-    class_status = request.json['class_status']
-    emp_id = request.json['emp_id']
-
-    class_id = request.json['class_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("""UPDATE course.class_list SET class_status = %s
-                WHERE emp_id = %s AND class_id = %s """, (class_status, emp_id, class_id))
-
-    conn.commit()
-    cur.close()
-
-    return("Successfully update learner's or trainer's class_list status"), 200
-
-# List of classes based on courses id
-
-
-@ app.route("/available_classes", methods=['POST'])
-def available_classes():
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    course_id = request.json['course_id']
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute(
-        "SELECT class_id FROM course.class WHERE course_id=%s", (course_id))
-
-    result = cur.fetchall()
-    conn.commit()
-    cur.close()
-    return jsonify(result), 200
-
-# get courses name and id for pre-req dropdown to create course
-
-
-@ app.route("/prereq_dropdown", methods=['GET'])
-def prereq_dropdown():
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-
-    cur.execute("SELECT course_id, course_name FROM course.course")
 
     result = cur.fetchall()
     conn.commit()
@@ -791,7 +636,6 @@ def all_eligible_classes():
 
     course_id = request.json['course_id']
     dt_string = datetime.now().date()
-    #dt_string = today.strftime("%d/%m/%Y")
     print(dt_string)
     final = []
 
@@ -802,9 +646,7 @@ def all_eligible_classes():
         "SELECT * FROM course.class WHERE course_id=%s", (course_id))
     result = cur.fetchall()
     for i in result:
-        # if datetime.strftime(i['start_date'], "%Y/%m/%d") < dt_string and datetime(i['end_date'],  "%Y/%m/%d") > dt_string:
-        if i['start_date'] < dt_string and i['end_date'] > dt_string:
-            final.append(i)
+        final.append(i)
 
     conn.commit()
     cur.close()

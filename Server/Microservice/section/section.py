@@ -1,5 +1,3 @@
-import requests
-import datetime
 import random
 from flask import jsonify, Flask, request
 from flaskext.mysql import MySQL
@@ -21,8 +19,6 @@ mysql = MySQL(app, cursorclass=DictCursor)
 mysql.init_app(app)
 
 
-## learner want to take the quiz ##
-## I need learner score, check the answer with database ##
 @app.route("/section_info", methods=['POST'])
 def section_info():
 
@@ -123,37 +119,6 @@ def add_section():
 
     cur.execute("""INSERT INTO section.quiz(section_id, class_id, course_id, quiz_type) VALUES (%s, %s, %s, %s)""",
                 (int(section_id), int(class_id), int(course_id), 'ungraded'))
-
-    # commit the command
-    conn.commit()
-
-    # close sql connection
-    cur.close()
-
-    return jsonify(result), 200
-
-
-@ app.route('/create_first_section', methods=['POST'])
-def create_first_section():
-
-    # check for body request
-    if not request.json:
-        return("Invalid body request."), 400
-
-    section_id = "1"
-    class_id = request.json['class_id']
-    course_id = request.json['course_id']
-    materials = " "
-    quiz_id = course_id + class_id + '100'
-
-    conn = mysql.connect()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO section.section(section_id, class_id, course_id, materials) VALUES (%s, %s, %s, %s)",
-                (section_id, class_id, course_id, materials))
-
-    cur.execute("INSERT INTO section.quiz(quiz_id, class_id, course_id, materials) VALUES (%s, %s, %s, %s)",
-                (quiz_id, class_id, course_id, materials))
-    result = cur.fetchall()
 
     # commit the command
     conn.commit()
