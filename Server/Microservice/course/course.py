@@ -66,6 +66,15 @@ def create_class():
     cur.execute("""INSERT INTO section.quiz(quiz_id, class_id, course_id, total_mark, quiz_type, time) VALUES ( %s, %s, %s, %s, %s, %s)""",
                 (quiz_id, class_id, course_id, 50, 'graded', 4200))
     conn.commit()
+    cur.execute("""SELECT quiz_id FROM section.quiz WHERE section_id=%s and class_id=%s and course_id=%s and quiz_type=%s""",
+                (1, class_id, course_id, 'ungraded'))
+    result = cur.fetchall()
+    quiz_id = result[0]['quiz_id'] + 1
+    conn.commit()
+    # ALTER TABLE course.course AUTO_INCREMENT=100;
+    cur.execute("""ALTER TABLE course.course AUTO_INCREMENT=%s""",
+                (quiz_id))
+    conn.commit()
     cur.close()
 
     return("Successfully Create Class"), 200
@@ -581,6 +590,13 @@ def get_class_list():
 
     cur.execute("SELECT * FROM course.class_list WHERE class_id=%s;", (class_id))
     result = cur.fetchall()
+    for i in result:
+        if i['graded_result'] == "pass":
+            i['status'] = 'Completed'
+        elif i['graded_result'] == None:
+            i['status'] = "In Progress"
+        else:
+            i['status'] = "Incomplete"
 
     conn.commit()
     cur.close()
@@ -646,7 +662,8 @@ def all_eligible_classes():
         "SELECT * FROM course.class WHERE course_id=%s", (course_id))
     result = cur.fetchall()
     for i in result:
-        final.append(i)
+        if i['start_enrol'] < dt_string and i['end_enrol'] > dt_string:
+            final.append(i)
 
     conn.commit()
     cur.close()
@@ -672,8 +689,14 @@ def enroll_engineer():
         emp_id = learner[i]
         cur.execute(
             "UPDATE course.pending_enrolment SET pending_status = 'Approval' WHERE emp_id =%s and class_id =%s;", (emp_id, class_id))
+        conn.commit()
         cur.execute("""INSERT INTO course.class_list(emp_id, emp_name, class_id, class_status) VALUES (%s, %s, %s, %s)""",
                     (emp_id, emp_name, class_id, 'learner'))
+        conn.commit()
+        cur.execute("""UPDATE employee.learner SET courses_ongoing = concat(courses_ongoing, ',' , %s)
+            WHERE emp_id = %s """,
+                    (course_id, emp_id))
+
         conn.commit()
 
     cur.close()
@@ -745,9 +768,9 @@ def remove_pending():
     cur.close()
     return("Success"), 200
 
+
 @ app.route("/ended_classes", methods=['GET'])
 def ended_classes():
-    
 
     dt_string = datetime.now().date()
     #dt_string = today.strftime("%d/%m/%Y")
@@ -764,6 +787,7 @@ def ended_classes():
     cur.close()
 
     return jsonify(result), 200
+
 
 @ app.route("/check_class_list/<int:class_id>", methods=['GET'])
 def check_class_list(class_id):
@@ -782,6 +806,7 @@ def check_class_list(class_id):
     cur.close()
 
     return jsonify(result), 200
+
 
 @ app.route("/class_info", methods=['POST'])
 def class_info():
