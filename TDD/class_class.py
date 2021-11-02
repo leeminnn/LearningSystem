@@ -1,4 +1,4 @@
- from datetime import datetime
+from datetime import datetime
 class Class:
     def __init__(self,class_id,date,course_id):
         self.__class_id = class_id
@@ -32,7 +32,7 @@ class Class:
             'start_enrol':'2021-01-01',
             'end_enrol':'2021-12-12'
         },{
-            'class_id' : '06',
+            'class_id' : '07',
             'intake' : '40',
             'emp_id' : '05',
             'course_id': '115',
@@ -45,11 +45,11 @@ class Class:
         class_list = []
         classes = self.__classes
         print(self.__date)
-        date = datetime.strptime(self.__date,"%Y-%m-%d")
+        date = self.__date
         for i in range(0,len(classes)):
             if classes[i]['course_id'] == self.__course_id:
-                start_enrol = datetime.strptime(classes[i]['start_enrol'],"%Y-%m-%d")
-                end_enrol = datetime.strptime (classes[i]['end_enrol'],"%Y-%m-%d")
-                if (date > start_enrol and date < end_enrol):
-                    class_list.append(classes[i]['class_id'],classes[i]['course_id'],classes[i]['intake'])
+                start_enrol = datetime.strptime(classes[i]['start_enrol'],'%Y-%m-%d').strftime('%Y-%m-%d')
+                end_enrol = datetime.strptime (classes[i]['end_enrol'],'%Y-%m-%d').strftime('%Y-%m-%d')
+                if (date >= start_enrol and date <= end_enrol):
+                    class_list.append([classes[i]['class_id'],classes[i]['course_id'],classes[i]['intake']])
         return class_list
