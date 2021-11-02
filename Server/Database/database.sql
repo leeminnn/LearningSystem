@@ -3,8 +3,6 @@ CREATE TABLE IF NOT EXISTS section.section (
   section_id int NOT NULL,
   class_id int NOT NULL, 
   course_id int NOT NULL,
-  course_name VARCHAR (255),
-  section_desc VARCHAR (255),
   materials VARCHAR (255),
   CONSTRAINT PK_section PRIMARY KEY (section_id, class_id, course_id)
 );
@@ -37,9 +35,10 @@ CREATE TABLE course.course (
   course_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
   course_name VARCHAR (255),
   course_desc VARCHAR (255),
-  pre_req VARCHAR (255),
-  course_active VARCHAR (255)
+  pre_req VARCHAR (255) DEFAULT 'No Prerequisite Course',
+  course_active VARCHAR (255) DEFAULT 'active'
 );
+ALTER TABLE course.course AUTO_INCREMENT=100;
 
 CREATE TABLE IF NOT EXISTS course.class (
   class_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -47,7 +46,6 @@ CREATE TABLE IF NOT EXISTS course.class (
   emp_id int NOT NULL, 
   emp_name VARCHAR (255),
   course_id int NOT NULL,
-  seat_left int, 
   start_date date, 
   end_date date,
   start_enrol date, 
@@ -93,9 +91,9 @@ CREATE TABLE IF NOT EXISTS employee.employee (
 CREATE TABLE IF NOT EXISTS employee.learner (
   emp_id int NOT NULL PRIMARY KEY,
   emp_name VARCHAR (255),
-  courses_ongoing VARCHAR (255),
-  courses_completed VARCHAR (255),
-  courses_incompleted VARCHAR (255),
+  courses_ongoing VARCHAR (255) DEFAULT ',' ,
+  courses_completed VARCHAR (255)  DEFAULT ',' , 
+  courses_incompleted VARCHAR (255) DEFAULT ',' ,
   badge VARCHAR (255),
   CONSTRAINT learner_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
@@ -103,8 +101,8 @@ CREATE TABLE IF NOT EXISTS employee.learner (
 CREATE TABLE IF NOT EXISTS employee.trainer (
   emp_id int NOT NULL PRIMARY KEY,
   emp_name VARCHAR (255),
-  courses_teaching VARCHAR (255),
-  courses_completed VARCHAR (255),
+  courses_teaching VARCHAR (255) DEFAULT ',' ,
+  courses_completed VARCHAR (255) DEFAULT ',' ,
   CONSTRAINT trainer_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
 
