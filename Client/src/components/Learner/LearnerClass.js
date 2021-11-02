@@ -87,8 +87,9 @@ function LearnerClass() {
                             />
                         </ListItem>
                     </List>
-                    {(today.getTime() < (new Date(entry.end_date).getTime())) && (
+                    {(today.getTime() < (new Date(entry.end_enrol).getTime())) && (
                         <div style={{marginLeft:"5%", marginBottom: '2%'}}>
+                            {console.log(today.getTime()< (new Date(entry.end_enrol).getTime()))}
                             <Button variant="contained" color='error' value={entry.class_id} onClick={(e) =>withdraw(e.target.value)}>Withdraw</Button>
                         </div>
                     )}

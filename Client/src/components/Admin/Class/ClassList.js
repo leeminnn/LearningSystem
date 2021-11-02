@@ -29,7 +29,8 @@ const columns = [
 { field: 'empid', headerName: 'Employee ID', width: 180 },
 { field: 'name', headerName: 'Name', width: 180 },
 { field: 'progress', headerName: 'Progress', width: 180 },
-{ field: 'role', headerName: 'Role', width: 180 }
+{ field: 'role', headerName: 'Role', width: 180 },
+{ field: 'status', headerName: 'Status', width: 180 }
 ];
 
 
@@ -63,7 +64,7 @@ function ClassList( {match} ) {
                 data: { class_id: match.params.id},
             })
             if (onSubmit.status === 200){
-                if (today.getTime() >= new Date(onSubmit.data[0].end_date).getTime()) {
+                if (today.getTime() >= new Date(onSubmit.data[0].end_enrol).getTime()) {
                     setDisableButton(true)
                 }
             }
@@ -141,7 +142,8 @@ function ClassList( {match} ) {
                     let name = tempList[i].emp_name;
                     let role = tempList[i].class_status;
                     let progress = tempList[i].progress;
-                    temp.push({ id: emp_id, empid: emp_id, name: name, role: role, progress: progress })
+                    let status = tempList[i].status;
+                    temp.push({ id: emp_id, empid: emp_id, name: name, role: role, progress: progress, status: status })
                 }
                 setClassList(temp)
             }
