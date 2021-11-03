@@ -24,7 +24,7 @@ function LearnerClass() {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://localhost:5000/get_learner_classes',
+                url: 'http://0.0.0.0:5000/get_learner_classes',
                 data: {course_id: courseID, emp_id:emp_id},
             })
             if (onSubmit.status == 200){
@@ -44,7 +44,7 @@ function LearnerClass() {
           const onSubmit =
             await axios({
               method: 'delete',
-              url: 'http://localhost:5000/withdraw_learners',
+              url: 'http://0.0.0.0:5000/withdraw_learners',
               data: data,
             })
             if (onSubmit.status === 200){

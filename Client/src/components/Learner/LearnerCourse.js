@@ -34,7 +34,7 @@ function LearnerCourse({match}) {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://localhost:5002/get_quiz_id',
+              url: 'http://0.0.0.0:5002/get_quiz_id',
               data: {
                     // quiz_type =
                     section_id : e,
@@ -57,7 +57,7 @@ function LearnerCourse({match}) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://localhost:5002/get_questions',
+                url: 'http://0.0.0.0:5002/get_questions',
                 data: {
                   quiz_id : quiz_id['quiz_id']
                 },
@@ -84,7 +84,7 @@ function LearnerCourse({match}) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://localhost:5002/get_user_sections',
+                url: 'http://0.0.0.0:5002/get_user_sections',
                 data: {
                     class_id : match.params.id,
                     course_id : course_id,
@@ -106,7 +106,7 @@ function LearnerCourse({match}) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://localhost:5000/learner_progress',
+                url: 'http://0.0.0.0:5000/learner_progress',
                 data: {emp_id : emp_Id, class_id : match.params.id},
               })
               if (onSubmit.status == 200){

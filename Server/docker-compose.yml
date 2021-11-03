@@ -14,3 +14,17 @@ services:
       - "3305:3306"
     volumes:
       - ./Database:/docker-entrypoint-initdb.d
+
+  # section:
+  #   build:
+  #     context: ./Microservice/section
+  #     dockerfile: Dockerfile
+  #   image: leemin/section:latest
+  #   restart: always
+  #   networks:
+  #     - playfoo
+  #   environment:
+  #     dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/user
+  #     PYTHONUNBUFFERED: 1
+  #   ports:
+  #   - "5002:5002"
