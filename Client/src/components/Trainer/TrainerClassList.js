@@ -49,7 +49,7 @@ function TrainerClassList( {match} ) {
             const onSubmit =
             await axios({
                 method: 'post',
-                url: 'http://localhost:5001/get_learners',
+                url: 'http://0.0.0.0:5001/get_learners',
                 data: data,
               })
               if (onSubmit.status === 200){
@@ -72,7 +72,7 @@ function TrainerClassList( {match} ) {
             const onSubmit =
                await axios({
                 method: 'post',
-                url: 'http://localhost:5000/get_class_list',
+                url: 'http://0.0.0.0:5000/get_class_list',
                 data: {class_id: match.params.id},
             })
             if (onSubmit.status === 200){
