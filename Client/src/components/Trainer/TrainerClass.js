@@ -22,7 +22,7 @@ function TrainerClass() {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5000/get_classes',
+                url: 'http://localhost:5000/get_classes',
                 data: {course_id: courseID, emp_id: emp_id},
             })
             if (onSubmit.status == 200){

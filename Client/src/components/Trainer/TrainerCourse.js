@@ -27,7 +27,7 @@ function TrainerCourse( {match}) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5002/section_info',
+                url: 'http://localhost:5002/section_info',
                 data: {
                     class_id : match.params.id,
                     course_id : course_id
@@ -70,7 +70,7 @@ function TrainerCourse( {match}) {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://0.0.0.0:5002/add_section',
+              url: 'http://localhost:5002/add_section',
               data: data,
             //   credentials: 'include'
             })
@@ -86,7 +86,7 @@ function TrainerCourse( {match}) {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://0.0.0.0:5002/get_quiz_id',
+              url: 'http://localhost:5002/get_quiz_id',
               data: {
                 section_id : section_id,
                 class_id : classID,

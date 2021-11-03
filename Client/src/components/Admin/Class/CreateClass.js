@@ -40,7 +40,7 @@ function CreateClass() {
 
 
     const getClassList =() => {
-        axios.get('http://0.0.0.0:5001/get_trainers')
+        axios.get('http://localhost:5001/get_trainers')
         .then((response) => {
             const myList = response.data
             let temp = []
@@ -74,7 +74,7 @@ function CreateClass() {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://0.0.0.0:5000/create_class',
+              url: 'http://localhost:5000/create_class',
               data: data,
             })
             if (onSubmit.status == 200){

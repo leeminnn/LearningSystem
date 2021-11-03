@@ -57,9 +57,9 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
         }
         console.log(formData)
         if (name === 'Final Quiz') {
-            var URLink = 'http://0.0.0.0:5002/create_final_quiz_question';
+            var URLink = 'http://localhost:5002/create_final_quiz_question';
         } else {
-            var URLink = 'http://0.0.0.0:5002/create_question';
+            var URLink = 'http://localhost:5002/create_question';
         }
         try{
           const onSubmit =
@@ -89,7 +89,7 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5002/update_quiz_time',
+                url: 'http://localhost:5002/update_quiz_time',
                 data: {
                   quiz_id : quiz_id,
                   time : duration
@@ -110,7 +110,7 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5002/get_questions',
+                url: 'http://localhost:5002/get_questions',
                 data: {
                   quiz_id : quiz_id
                 },
