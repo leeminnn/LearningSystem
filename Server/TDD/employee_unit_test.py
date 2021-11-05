@@ -1,6 +1,6 @@
 import unittest 
-from trainer_class import Trainer
-from trainer_class import Learner
+from employee_class import Trainer
+from employee_class import Learner
 
 class TestTrainer(unittest.TestCase): 
 
