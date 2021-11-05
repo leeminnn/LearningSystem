@@ -66,14 +66,14 @@ function Login() {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5001/login',
+                url: 'http://localhost:5001/login',
                 data: {
                     role: role,
                     emp_id: username,
                     password : password
                 },
               })
-              if (onSubmit.status == 200){
+              if (onSubmit.status === 200){
                 localStorage.setItem('emp_name', onSubmit.data)
                 localStorage.setItem('emp_id', username)
                 history.push(page)

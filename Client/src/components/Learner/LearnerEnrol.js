@@ -31,7 +31,6 @@ function LearnerEnrol() {
     const courseID = localStorage.getItem("course_id");
     const emp_id = localStorage.getItem('emp_id')
     const emp_name = localStorage.getItem('emp_name')
-    console.log(date.getTime())
     let history = useHistory();
 
 
@@ -40,7 +39,7 @@ function LearnerEnrol() {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5000/enrol',
+                url: 'http://localhost:5000/enrol',
                 data: {
                     emp_id : emp_id,
                     emp_name : emp_name,
@@ -49,7 +48,7 @@ function LearnerEnrol() {
                     class_id : e.target.value
                 },
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 alert("You have successfully request to enroll in class " + e.target.value + ". Please wait for HR approval.")
                 history.push('/l/home')
             }
@@ -65,7 +64,7 @@ function LearnerEnrol() {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5000/all_eligible_classes',
+                url: 'http://localhost:5000/all_eligible_classes',
                 data: {course_id: courseID},
             })
             if (onSubmit.status === 200){
@@ -80,7 +79,6 @@ function LearnerEnrol() {
     };
 
     useEffect(() => getClassList(), [])
-    console.log(classList)
     return (
         <div>
             <Nav/>
@@ -88,14 +86,13 @@ function LearnerEnrol() {
                 <h3>{courseName} Class</h3>
             </div>
 
-            {classList.length == 0 && (
+            {classList.length === 0 && (
                 <h2 style={{textAlign: 'center', marginTop:'50px'}}>No classes for now</h2>
             )}
 
             {classList.map(entry => (
                 <div className='course_list'>
                     <List sx={{ width: '50%', bgcolor: 'background.paper', margin: '0 5%'}}>
-                        {console.log(entry)}
                         <ListItem alignItems="flex-start">
                             <ListItemText
                             primary={ "Class " + entry.class_id + " by " +  entry.emp_name}

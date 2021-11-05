@@ -25,7 +25,6 @@ const style = {
 
 function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time}) {
     const quiz = [quiz_id];
-    console.log(section_id)
     const [check, setCheck] = useState({});
     const [open, setOpen] = useState(false);
     const course_id = localStorage.getItem('course_id')
@@ -65,7 +64,7 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time})
                 class_id : class_id,
                 course_id : course_id
             }
-            var URLink = 'http://0.0.0.0:5002/update_progress'
+            var URLink = 'http://localhost:5002/update_progress'
         } else{
             var data = {
                 emp_id : emp_id,
@@ -73,7 +72,7 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time})
                 result: result,
                 course_id : course_id
             }
-            var URLink = 'http://0.0.0.0:5000/pass_final_quiz'
+            var URLink = 'http://localhost:5000/pass_final_quiz'
         }
         try{
             const onSubmit =
@@ -120,15 +119,13 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time})
     });
     
 
-    console.log(totalMarks*0.85)
-
     return (
         <div>
             <div>
                 {hours} hours {mins} minutes {sec} seconds
             </div>
             <div className='quiz'>
-                { quiz_num != undefined &&
+                { quiz_num !== undefined &&
                     <div>
                         {questions.map(entry => (
                             <div className='question' style={{textAlign: 'left'}}>

@@ -116,9 +116,14 @@ def add_section():
                 (section_id, class_id, course_id, materials))
     result = cur.fetchall()
     conn.commit()
+    cur.execute(
+        """SELECT MAX(quiz_id) FROM section.quiz WHERE quiz_type='ungraded'""")
+    result = cur.fetchall()
+    conn.commit()
+    quiz_id = result[0]['MAX(quiz_id)'] + 1
 
-    cur.execute("""INSERT INTO section.quiz(section_id, class_id, course_id, quiz_type) VALUES (%s, %s, %s, %s)""",
-                (int(section_id), int(class_id), int(course_id), 'ungraded'))
+    cur.execute("""INSERT INTO section.quiz(quiz_id, section_id, class_id, course_id, quiz_type) VALUES (%s, %s, %s, %s, %s)""",
+                (quiz_id, int(section_id), int(class_id), int(course_id), 'ungraded'))
 
     # commit the command
     conn.commit()

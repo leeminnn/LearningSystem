@@ -60,7 +60,7 @@ function ClassList( {match} ) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5000/class_info',
+                url: 'http://localhost:5000/class_info',
                 data: { class_id: match.params.id},
             })
             if (onSubmit.status === 200){
@@ -81,7 +81,7 @@ function ClassList( {match} ) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5000/pending_approval',
+                url: 'http://localhost:5000/pending_approval',
                 data: {class_id: match.params.id, course_id: courseID},
             })
             if (onSubmit.status === 200){
@@ -107,7 +107,7 @@ function ClassList( {match} ) {
             const onSubmit =
             await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5001/get_learners',
+                url: 'http://localhost:5001/get_learners',
                 data: data,
               })
               if (onSubmit.status === 200){
@@ -130,7 +130,7 @@ function ClassList( {match} ) {
             const onSubmit =
                await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5000/get_class_list',
+                url: 'http://localhost:5000/get_class_list',
                 data: {class_id: match.params.id},
             })
             if (onSubmit.status === 200){
@@ -169,8 +169,6 @@ function ClassList( {match} ) {
         let information = event.target.value.split(",")
         let emp_id = information[0]
         let name = information[1]
-        console.log(event.target.value)
-        console.log(event.target.value.slice(2, ))
         if ( event.target.checked === true) {
             setApprovee({
                 ...approvee,
@@ -192,7 +190,7 @@ function ClassList( {match} ) {
           const onSubmit =
             await axios({
               method: 'delete',
-              url: 'http://0.0.0.0:5000/withdraw_learners',
+              url: 'http://localhost:5000/withdraw_learners',
               data: data,
             })
             if (onSubmit.status === 200){
@@ -207,12 +205,11 @@ function ClassList( {match} ) {
 
     async function deletePending(temp) {
         let data = {learner: temp, course_id: courseID}
-        console.log(data)
         try{
           const onSubmit =
             await axios({
               method: 'delete',
-              url: 'http://0.0.0.0:5000/remove_pending',
+              url: 'http://localhost:5000/remove_pending',
               data: data,
             })
             if (onSubmit.status === 200){
@@ -232,7 +229,7 @@ function ClassList( {match} ) {
             const onSubmit =
                 await axios({
                 method: 'put',
-                url: 'http://0.0.0.0:5000/enroll_engineer',
+                url: 'http://localhost:5000/enroll_engineer',
                 data: data,
                 })
             }
@@ -241,12 +238,11 @@ function ClassList( {match} ) {
             }
 
             let info = {emp_id: temp, class_id: match.params.id, course_id: courseID}
-            console.log(info)
             try{
             const onSubmit =
                 await axios({
                 method: 'post',
-                url: 'http://0.0.0.0:5002/declare_ungraded_quiz',
+                url: 'http://localhost:5002/declare_ungraded_quiz',
                 data: info,
                 })
                 if (onSubmit.status === 200){
@@ -267,12 +263,11 @@ function ClassList( {match} ) {
     async function enrolLearners(ID) {
         let data = {learner: ID, class_id: match.params.id, course_id: courseID, learnerName:learner}
         if (ID.length < (availLearners - totalLearners)) {
-            console.log(ID.length)
             try{
                 const onSubmit =
                   await axios({
                     method: 'put',
-                    url: 'http://0.0.0.0:5000/assign_engineer',
+                    url: 'http://localhost:5000/assign_engineer',
                     data: data,
                   })
               }
@@ -281,12 +276,11 @@ function ClassList( {match} ) {
               }
       
               let info = {emp_id: ID, class_id: match.params.id, course_id: courseID}
-              console.log(info)
               try{
                 const onSubmit =
                   await axios({
                     method: 'post',
-                    url: 'http://0.0.0.0:5002/declare_ungraded_quiz',
+                    url: 'http://localhost:5002/declare_ungraded_quiz',
                     data: info,
                   })
                   if (onSubmit.status === 200){
@@ -306,7 +300,6 @@ function ClassList( {match} ) {
 
     const addPending = () => {
         if (Object.keys(approvee).length > 0){
-            console.log(approvee)
             let temp = []
             for (let id in approvee){
                 temp.push(id)
@@ -315,14 +308,12 @@ function ClassList( {match} ) {
             setOpenApprove(false)
         
         } else{
-            console.log(approvee)
             setOpenApprove(false)
         }
     }
 
     const removePending = () => {
         if (Object.keys(approvee).length > 0){
-            console.log(approvee)
             let temp = []
             for (let id in approvee){
                 temp.push(id)
@@ -331,7 +322,6 @@ function ClassList( {match} ) {
             setOpenApprove(false)
         
         } else{
-            console.log(approvee)
             setOpenApprove(false)
         }
     }
@@ -342,7 +332,6 @@ function ClassList( {match} ) {
             setOpenAssign(false)
         }
         else{
-            console.log(ID)
             setOpenAssign(false)
         }
     }
@@ -375,7 +364,7 @@ function ClassList( {match} ) {
                             ))}
                             </FormGroup>
                             <div style={{float:'left'}}>
-                                <Button size="small" color='error' variant="contained" onClick={removePending}>remove learner</Button>
+                                <Button size="small" color='error' variant="contained" onClick={removePending}>reject learner</Button>
                             </div>
                             <div style={{float:'right'}}>
                                 <Button size="small" variant="contained" onClick={addPending}>Add learner</Button>
