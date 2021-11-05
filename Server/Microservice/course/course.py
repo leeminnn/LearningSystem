@@ -58,21 +58,24 @@ def create_class():
     cur.execute("""INSERT INTO section.section(section_id, class_id, course_id) VALUES (%s, %s, %s)""",
                 (1, class_id, course_id))
     conn.commit()
-    cur.execute("""INSERT INTO section.quiz(section_id, class_id, course_id, total_mark, quiz_type) VALUES (%s, %s, %s, %s, %s)""",
-                (1, class_id, course_id, 0, 'ungraded'))
-    conn.commit()
+
     quiz_id = str(course_id) + str(class_id)
     quiz_id = int(quiz_id)
     cur.execute("""INSERT INTO section.quiz(quiz_id, class_id, course_id, total_mark, quiz_type, time) VALUES ( %s, %s, %s, %s, %s, %s)""",
                 (quiz_id, class_id, course_id, 50, 'graded', 4200))
     conn.commit()
-    cur.execute("""SELECT quiz_id FROM section.quiz WHERE section_id=%s and class_id=%s and course_id=%s and quiz_type=%s""",
-                (1, class_id, course_id, 'ungraded'))
+    cur.execute(
+        """SELECT MAX(quiz_id) FROM section.quiz WHERE quiz_type='ungraded'""")
     result = cur.fetchall()
-    quiz_id = result[0]['quiz_id'] + 1
     conn.commit()
+    quiz_id = result[0]['MAX(quiz_id)'] + 1
+    cur.execute("""INSERT INTO section.quiz(quiz_id, section_id, class_id, course_id, total_mark, quiz_type) VALUES (%s, %s, %s, %s, %s, %s)""",
+                (quiz_id, 1, class_id, course_id, 0, 'ungraded'))
+    conn.commit()
+
+    quiz_id += 1
     # ALTER TABLE course.course AUTO_INCREMENT=100;
-    cur.execute("""ALTER TABLE course.course AUTO_INCREMENT=%s""",
+    cur.execute("""ALTER TABLE section.quiz AUTO_INCREMENT=%s""",
                 (quiz_id))
     conn.commit()
     cur.close()
