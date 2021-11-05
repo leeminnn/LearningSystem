@@ -55,7 +55,6 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
             'question_option' : question_option,
             'mark': marks
         }
-        console.log(formData)
         if (name === 'Final Quiz') {
             var URLink = 'http://localhost:5002/create_final_quiz_question';
         } else {
@@ -95,9 +94,6 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
                   time : duration
                 },
               })
-              if (onSubmit.status === 200){
-                  console.log(onSubmit.data)
-              }
               return onSubmit.status
           }
           catch (err) {
@@ -120,7 +116,6 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
                 let temp = []
                 let marks = 0
                 for (let i = 0, len = myList.length; i < len; i++){
-                    console.log(myList[i])
                     marks += myList[i]['mark']
                     temp.push(myList[i])
                 }
@@ -135,7 +130,6 @@ function Quiz({name, classID, quiz_id, currentHour, currentMin}) {
     
     useEffect(() => {
         getQuestions();
-        console.log(currentMin)
         if (parseInt(currentMin) > 0){
             setMinutes(parseInt(currentMin));
         }

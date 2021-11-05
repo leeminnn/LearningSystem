@@ -12,7 +12,6 @@ import axios from 'axios';
 function LearnerClass() {
 
     const today = new Date();
-    // console.log(today)
     const courseName = localStorage.getItem("course_name");
     const [classList, setClassList] = useState([])
     const courseID = localStorage.getItem("course_id");
@@ -27,7 +26,7 @@ function LearnerClass() {
                 url: 'http://localhost:5000/get_learner_classes',
                 data: {course_id: courseID, emp_id:emp_id},
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 setClassList(onSubmit.data)
             }
             return onSubmit.status
@@ -39,7 +38,6 @@ function LearnerClass() {
 
     async function withdraw(class_id) {
         let data = {learner: [{empid: emp_id}], class_id:class_id, course_id: courseID}
-        console.log(data)
         try{
           const onSubmit =
             await axios({
@@ -70,7 +68,6 @@ function LearnerClass() {
             {classList.map(entry => (
                 <div className='course_list'>
                     <List sx={{ width: '50%', bgcolor: 'background.paper', margin: '0 5%'}}>
-                        {console.log(entry)}
                         <ListItem alignItems="flex-start">
                             <ListItemText
                             primary={ "Class " + entry.class_id + " by " +  entry.emp_name}
@@ -89,7 +86,6 @@ function LearnerClass() {
                     </List>
                     {(today.getTime() < (new Date(entry.end_enrol).getTime())) && (
                         <div style={{marginLeft:"5%", marginBottom: '2%'}}>
-                            {console.log(today.getTime()< (new Date(entry.end_enrol).getTime()))}
                             <Button variant="contained" color='error' value={entry.class_id} onClick={(e) =>withdraw(e.target.value)}>Withdraw</Button>
                         </div>
                     )}

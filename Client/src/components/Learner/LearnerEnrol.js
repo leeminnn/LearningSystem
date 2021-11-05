@@ -31,7 +31,6 @@ function LearnerEnrol() {
     const courseID = localStorage.getItem("course_id");
     const emp_id = localStorage.getItem('emp_id')
     const emp_name = localStorage.getItem('emp_name')
-    console.log(date.getTime())
     let history = useHistory();
 
 
@@ -49,7 +48,7 @@ function LearnerEnrol() {
                     class_id : e.target.value
                 },
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 alert("You have successfully request to enroll in class " + e.target.value + ". Please wait for HR approval.")
                 history.push('/l/home')
             }
@@ -80,7 +79,6 @@ function LearnerEnrol() {
     };
 
     useEffect(() => getClassList(), [])
-    console.log(classList)
     return (
         <div>
             <Nav/>
@@ -88,14 +86,13 @@ function LearnerEnrol() {
                 <h3>{courseName} Class</h3>
             </div>
 
-            {classList.length == 0 && (
+            {classList.length === 0 && (
                 <h2 style={{textAlign: 'center', marginTop:'50px'}}>No classes for now</h2>
             )}
 
             {classList.map(entry => (
                 <div className='course_list'>
                     <List sx={{ width: '50%', bgcolor: 'background.paper', margin: '0 5%'}}>
-                        {console.log(entry)}
                         <ListItem alignItems="flex-start">
                             <ListItemText
                             primary={ "Class " + entry.class_id + " by " +  entry.emp_name}

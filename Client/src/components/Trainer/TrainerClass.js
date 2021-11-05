@@ -25,7 +25,7 @@ function TrainerClass() {
                 url: 'http://localhost:5000/get_classes',
                 data: {course_id: courseID, emp_id: emp_id},
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 setClassList(onSubmit.data)
             }
             return onSubmit.status
@@ -36,7 +36,6 @@ function TrainerClass() {
     };
 
     useEffect(() => getClassList(), [])
-    console.log(classList)
     
     return (
         <div>

@@ -73,7 +73,7 @@ function Login() {
                     password : password
                 },
               })
-              if (onSubmit.status == 200){
+              if (onSubmit.status === 200){
                 localStorage.setItem('emp_name', onSubmit.data)
                 localStorage.setItem('emp_id', username)
                 history.push(page)

@@ -77,7 +77,6 @@ function TrainerClassList( {match} ) {
             })
             if (onSubmit.status === 200){
                 setTotalLearners(onSubmit.data.length)
-                console.log(onSubmit.data)
                 let tempList = onSubmit.data
                 let temp = []
                 for (let i = 0, len = tempList.length; i < len; i++){

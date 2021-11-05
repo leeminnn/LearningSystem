@@ -23,7 +23,6 @@ function HomePage () {
     };
 
     useEffect(() => getClassList(), [])
-    console.log(classList)
 
     return (
         <div>

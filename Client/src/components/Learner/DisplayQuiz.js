@@ -25,7 +25,6 @@ const style = {
 
 function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time}) {
     const quiz = [quiz_id];
-    console.log(section_id)
     const [check, setCheck] = useState({});
     const [open, setOpen] = useState(false);
     const course_id = localStorage.getItem('course_id')
@@ -120,15 +119,13 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time})
     });
     
 
-    console.log(totalMarks*0.85)
-
     return (
         <div>
             <div>
                 {hours} hours {mins} minutes {sec} seconds
             </div>
             <div className='quiz'>
-                { quiz_num != undefined &&
+                { quiz_num !== undefined &&
                     <div>
                         {questions.map(entry => (
                             <div className='question' style={{textAlign: 'left'}}>

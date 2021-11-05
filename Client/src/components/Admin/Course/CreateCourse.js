@@ -31,7 +31,7 @@ function CreateCourse() {
     };
 
     const checkClear = (reason, value) => {
-        if (reason =='clear'){
+        if (reason ==='clear'){
             setCourseID('No Prerequisite Course')
         }
         else {
@@ -47,7 +47,6 @@ function CreateCourse() {
             course_desc : desc,
             pre_req : courseID
         }
-        console.log(data)
         try{
           const onSubmit =
             await axios({
@@ -55,7 +54,7 @@ function CreateCourse() {
               url: 'http://localhost:5000/add_course',
               data: data,
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 history.push('/course')
             }
             return onSubmit.status
@@ -65,7 +64,6 @@ function CreateCourse() {
         }
     };
 
-    console.log(courseID)
     return (
         <div>
             <Nav/>

@@ -33,7 +33,7 @@ function EditCourse(props) {
     let history = useHistory();
 
     const checkClear = (reason, value) => {
-        if (reason =='clear'){
+        if (reason ==='clear'){
             setCourseID('No Prerequisite Course')
         }
         else {
@@ -61,7 +61,7 @@ function EditCourse(props) {
                 url: 'http://localhost:5000/course_info',
                 data: {course_id : id},
               })
-              if (onSubmit.status == 200){
+              if (onSubmit.status === 200){
                 setDescription(onSubmit.data[0].course_desc)
               }
               return onSubmit.status
@@ -74,16 +74,14 @@ function EditCourse(props) {
     useEffect(() => getCourseList(), [])
 
     async function deleteCourse(){
-        console.log("delete")
         let data = {
             course_id: id
         }
-        console.log(data)
         try{
           const onSubmit =
             await axios({
               method: 'put',
-              url: 'http://localhost:5000/remove',  //change endpoint
+              url: 'http://localhost:5000/remove', 
               data: data,
             })
             if (onSubmit.status === 200 ) {
@@ -97,7 +95,7 @@ function EditCourse(props) {
     };
 
     async function save(){
-        if (prereq == "No Prerequisite Course") {
+        if (prereq === "No Prerequisite Course") {
             var data = {
                 course_id: id,
                 course_name: courseName,
@@ -113,7 +111,6 @@ function EditCourse(props) {
             }
         }
         
-        console.log(data)
         try{
           const onSubmit =
             await axios({
@@ -121,8 +118,7 @@ function EditCourse(props) {
               url: 'http://localhost:5000/update_course', 
               data: data,
             })
-            console.log(onSubmit.status)
-            if (onSubmit.status == 200) {
+            if (onSubmit.status === 200) {
                 history.push('/course')
             }
         }
@@ -131,7 +127,6 @@ function EditCourse(props) {
         }
     };
 
-    console.log(courseID)
     return (
         <div>
             <Nav/>

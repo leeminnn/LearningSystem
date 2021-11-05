@@ -55,7 +55,6 @@ function CreateClass() {
     };
 
     useEffect(() => getClassList(), [])
-    console.log(ID)
 
     async function create(){
         let data = {
@@ -69,7 +68,6 @@ function CreateClass() {
             end_enrol: endEnrolment
         }
 
-        console.log(data)
         try{
           const onSubmit =
             await axios({
@@ -77,7 +75,7 @@ function CreateClass() {
               url: 'http://localhost:5000/create_class',
               data: data,
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 history.push('/course/classes')
             }
             return onSubmit.status

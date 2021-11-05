@@ -23,8 +23,7 @@ function LearnerCourseList({courses}) {
                     url: url,
                     data: {emp_id : emp_id},
                 })
-                if (onSubmit.status == 200){
-                    console.log(onSubmit.data)
+                if (onSubmit.status === 200){
                       setClassList(onSubmit.data.eligible)
                       setPending(onSubmit.data.Pending)
                 }
@@ -42,8 +41,7 @@ function LearnerCourseList({courses}) {
                     url: url,
                     data: {emp_id : emp_id},
                 })
-                if (onSubmit.status == 200){
-                    console.log(onSubmit.data)
+                if (onSubmit.status === 200){
                       setClassList(onSubmit.data)
                 }
                 return onSubmit.status

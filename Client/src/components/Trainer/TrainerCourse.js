@@ -33,7 +33,7 @@ function TrainerCourse( {match}) {
                     course_id : course_id
                 },
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 setSectionList(onSubmit.data)
             }
             return onSubmit.status
@@ -52,13 +52,11 @@ function TrainerCourse( {match}) {
     };
     
     const handleClick = (e) => {
-        console.log(e.target.innerText)
         setSectionName( e.target.innerText)
     }
     
     async function addSection(){
         const nextID = sectionList[sectionList.length -1].section_id +1
-        console.log(nextID)
         
         let data = {
             class_id : classID,
@@ -96,7 +94,6 @@ function TrainerCourse( {match}) {
             if (onSubmit.status === 200){
                 setQuizID(onSubmit.data.quiz_id)
                 setDuration(onSubmit.data.time)
-                console.log(onSubmit.data)
             }
             return onSubmit.status
         }
@@ -149,7 +146,6 @@ function TrainerCourse( {match}) {
                     ) : (
                         <div style={{textAlign:'center'}}>
                             <TrainerCourseSection name={sectionName} materials={materials} classID={classID} courseID={course_id} show={false}/>
-                            {console.log(parseInt((duration % (60 * 60)) / 60))}
                             <Quiz name={sectionName} classID={classID} quiz_id={quizID} currentHour={parseInt(duration / (60 * 60))} currentMin={parseInt((duration % (60 * 60)) / 60)}/>
                         </div>
                     )}

@@ -42,7 +42,7 @@ function LearnerCourse({match}) {
                     course_id : course_id
                 },
             })
-            if (onSubmit.status == 200){
+            if (onSubmit.status === 200){
                 setQuizID(onSubmit.data)
             }
             return onSubmit.status
@@ -66,7 +66,6 @@ function LearnerCourse({match}) {
                 const myList = onSubmit.data
                 let temp = []
                 for (let i = 0, len = myList.length, text = ""; i < len; i++){
-                    console.log(myList[i])
                     temp.push(myList[i])
                 }
                 setQuestionQuiz(temp)
@@ -91,7 +90,7 @@ function LearnerCourse({match}) {
                     emp_id : emp_Id
                 },
               })
-              if (onSubmit.status == 200){
+              if (onSubmit.status === 200){
                   setSectionList(onSubmit.data)
               }
               return onSubmit.status
@@ -109,8 +108,7 @@ function LearnerCourse({match}) {
                 url: 'http://localhost:5000/learner_progress',
                 data: {emp_id : emp_Id, class_id : match.params.id},
               })
-              if (onSubmit.status == 200){
-                  console.log(onSubmit.data)
+              if (onSubmit.status === 200){
                   setProgress(onSubmit.data.progress)
               }
               return onSubmit.status
@@ -127,7 +125,6 @@ function LearnerCourse({match}) {
         setOpen(!open)
     }
 
-    console.log(quiz_id)
 
     return (
         <div>
@@ -158,7 +155,7 @@ function LearnerCourse({match}) {
                             </ListItem>
                         ))}
                         <Divider light />
-                        { progress == 100 &&
+                        { progress === 100 &&
                             <ListItem button onClick={()=> {
                                 setSectionName('Final Quiz');
                                 setDesc("You have 30 minutes to complete this quiz which would determine your final grade for this module.")
@@ -174,12 +171,12 @@ function LearnerCourse({match}) {
                 <div className='section_details'>
                     <h3>{sectionName}</h3>
                     <h4>{desc}</h4>
-                    { sectionName != 'Final Quiz' && (
+                    { sectionName !== 'Final Quiz' && (
                         <div>
                             <a href={materials}>{materials}</a>
                         </div>
                     )}
-                    { sectionName != '' && (
+                    { sectionName !== '' && (
                         open  ? (
                             <DisplayQuiz quiz_id={quiz_id} quiz_num={quiz_id['quiz_id']} questions={questionQuiz} class_id={match.params.id} section_id={sectionID} time={quiz_id['time']}/>
                         ) : (

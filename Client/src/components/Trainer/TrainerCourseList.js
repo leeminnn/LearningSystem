@@ -4,7 +4,6 @@ import './Trainer.css';
 import { Link } from "react-router-dom";
 
 function TrainerCourseList({courses}) {
-    console.log(courses)
     const url = 'http://localhost:5000/get_trainer_' + courses + '_courses';
     const nextPage = (e) => {
         localStorage.setItem('course_id', e.entry.course_id);
@@ -22,7 +21,7 @@ function TrainerCourseList({courses}) {
                 url: url,
                 data: {emp_id: emp_id},
                 })
-                if (onSubmit.status == 200){
+                if (onSubmit.status === 200){
                     setClassList(onSubmit.data)
                 }
                 return onSubmit.status
