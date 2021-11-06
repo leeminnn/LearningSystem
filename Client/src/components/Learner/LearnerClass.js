@@ -89,9 +89,16 @@ function LearnerClass() {
                             <Button variant="contained" color='error' value={entry.class_id} onClick={(e) =>withdraw(e.target.value)}>Withdraw</Button>
                         </div>
                     )}
-                    <div className='button'>
-                        <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/l/course/classes/" + e.target.value)}>View</Button>
-                    </div>
+                    {(today.getTime() < (new Date(entry.start_date).getTime())) ? (
+                        <div className='button'>
+                            <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/l/course/classes/" + e.target.value)} disabled>View</Button>
+                        </div>
+                    ) : (
+                        <div className='button'>
+                            <Button variant="outlined" value={entry.class_id} onClick={(e) => history.push("/l/course/classes/" + e.target.value)}>View</Button>
+                        </div>
+                    )}
+                    
                 </div>
             ))}
             
