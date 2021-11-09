@@ -1,7 +1,11 @@
+### Testing for Trainer Upload Quiz ###
+### Primary Author: Kam Lee Min ###
+
+
 import unittest
 import flask_testing
 import json
-from app import app, db, Quiz
+from section_integration_class import app, db, Quiz
 
 
 class TestApp(flask_testing.TestCase):
