@@ -4,3 +4,4 @@ mysql-connector-python
 flask-mysql
 flask_cors
 boto3
+cryptography

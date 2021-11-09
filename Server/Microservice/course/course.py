@@ -3,12 +3,13 @@ from flask import jsonify, Flask, request
 from flaskext.mysql import MySQL
 from pymysql.cursors import DictCursor
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
 cors = CORS(app)
 
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-app.config['MYSQL_DATABASE_PORT'] = 3305
+app.config['MYSQL_DATABASE_HOST'] = os.environ['dbURL']
+app.config['MYSQL_DATABASE_PORT'] = 3306
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_DB'] = 'course'
