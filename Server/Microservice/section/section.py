@@ -81,8 +81,7 @@ def upload_materials():
     key_name = "course_" + str(course_id) + "_class_" + str(class_id) + \
         "_section_" + str(section_id) + "_" + str(file_name.filename)
 
-    s3 = boto3.resource('s3', aws_access_key_id='AKIAZLT6VGYUBPNOJLYT',
-                        aws_secret_access_key='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')
+    s3 = boto3.resource('s3')
     s3.Bucket('coursematerialg5t4').put_object(
         Key=key_name, Body=file_name)
 
