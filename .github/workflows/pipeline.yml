@@ -23,4 +23,4 @@ jobs:
           pip install -r ./TDD/requirements.txt
       - name: execute py script # run the run.py to get the latest data
         run: |
-          python ./TDD/integration_tests.py
+          python ./TDD/helloWorld.py
