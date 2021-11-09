@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS section.section (
   materials VARCHAR (255),
   CONSTRAINT PK_section PRIMARY KEY (section_id, class_id, course_id)
 );
+INSERT INTO section.section (section_id, class_id, course_id, materials) 
+VALUES ('1', '1', '1', ' ');
 
 CREATE TABLE IF NOT EXISTS section.quiz (
   quiz_id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -87,6 +89,22 @@ CREATE TABLE IF NOT EXISTS employee.employee (
   phone int(8),
   dept VARCHAR (255)
 );
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('1', 'Amy Tan', '1234', 'amy_tan@gmail.com', '81234567', 'Electronic & Controls');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('2', 'Joy Lim', '1234', 'joylim@gmail.com', '82345678', 'Electrical Service');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('3', 'Cassy Toh', '1234', 'cassy_toh@gmail.com', '83456789', 'Mechanical Service');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('4', 'Paul Kor', '1234', 'paulkor@gmail.com', '84567890', 'Electronic & Controls');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('5', 'Jack Lim', '1234', 'Jacklim@gmail.com', '85678912', 'Mechanical Service');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('6', 'Peter Ong', '1234', 'Peter_ong@gmail.com', '91234567', 'Electronic & Controls');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('7', 'Lyn Tan', '1234', 'Lyn_tan@gmail.com', '92345678', 'Mechanical Service');
+INSERT INTO employee.employee (emp_id, emp_name, emp_password, email, phone, dept) 
+VALUES ('8', 'Joel Lim', '1234', 'Joellim@gmail.com', '93456789', 'Electrical Service');
 
 CREATE TABLE IF NOT EXISTS employee.learner (
   emp_id int NOT NULL PRIMARY KEY,
@@ -98,6 +116,15 @@ CREATE TABLE IF NOT EXISTS employee.learner (
   CONSTRAINT learner_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
 
+INSERT INTO employee.learner (emp_id, emp_name) 
+VALUES ('1','Amy Tan');
+INSERT INTO employee.learner (emp_id, emp_name) 
+VALUES ('2','Joy Lim');
+INSERT INTO employee.learner (emp_id, emp_name) 
+VALUES ('3','Cassy Toh');
+INSERT INTO employee.learner (emp_id, emp_name) 
+VALUES ('4','Paul Kor');
+
 CREATE TABLE IF NOT EXISTS employee.trainer (
   emp_id int NOT NULL PRIMARY KEY,
   emp_name VARCHAR (255),
@@ -105,5 +132,14 @@ CREATE TABLE IF NOT EXISTS employee.trainer (
   courses_completed VARCHAR (255) DEFAULT ',' ,
   CONSTRAINT trainer_id FOREIGN KEY (emp_id) REFERENCES employee(emp_id)
 );
+
+INSERT INTO employee.trainer (emp_id, emp_name) 
+VALUES ('5','Jack Lim');
+INSERT INTO employee.trainer (emp_id, emp_name) 
+VALUES ('6','Peter Ong');
+INSERT INTO employee.trainer (emp_id, emp_name) 
+VALUES ('7','Lyn Tan');
+INSERT INTO employee.trainer (emp_id, emp_name) 
+VALUES ('8','Joel Lim');
 
 DROP DATABASE IF EXISTS learningsystem;
