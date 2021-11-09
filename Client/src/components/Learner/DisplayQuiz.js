@@ -64,7 +64,7 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time})
                 class_id : class_id,
                 course_id : course_id
             }
-            var URLink = 'http://localhost:5002/update_progress'
+            var URLink = 'http://18.235.179.159:5002/update_progress'
         } else{
             var data = {
                 emp_id : emp_id,
@@ -72,7 +72,7 @@ function DisplayQuiz({quiz_id, quiz_num, questions, class_id, section_id, time})
                 result: result,
                 course_id : course_id
             }
-            var URLink = 'http://localhost:5000/pass_final_quiz'
+            var URLink = 'http://18.235.179.159:5000/pass_final_quiz'
         }
         try{
             const onSubmit =

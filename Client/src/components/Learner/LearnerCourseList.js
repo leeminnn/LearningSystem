@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function LearnerCourseList({courses}) {
     const emp_id = localStorage.getItem('emp_id')
-    const url = 'http://localhost:5000/' + courses;
+    const url = 'http://18.235.179.159:5000/' + courses;
     const nextPage = (e) => {
         localStorage.setItem('course_id', e.entry.course_id);
         localStorage.setItem('course_name', e.entry.course_name);
