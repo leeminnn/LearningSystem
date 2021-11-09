@@ -27,14 +27,16 @@ function TrainerCourseSection({name, materials, show, classID, courseID}) {
         formData.append('course_id', courseID)
         formData.append('class_id', classID)
         formData.append('section_id', name)
+        console.log(formData)
         try{
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://18.235.179.159:5002/upload_materials',
+              url: 'http://localhost:5002/upload_materials',
               data: formData,
             })
-            if (onSubmit.status === 200){
+            if (onSubmit.status == 200){
+                console.log(onSubmit.data)
                 showStatus()
             }
             return onSubmit.status

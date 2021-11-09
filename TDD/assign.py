@@ -61,29 +61,6 @@ class Class_List(db.Model):
     def class_id(self):
         return self._class_id
 
-class Section(db.Model): 
-    __tablename__ = 'section'
-    
-    section_id = db.Column(db.Integer, primary_key=True)
-    class_id = db.Column(db.Integer)
-    course_id = db.Column(db.Integer)
-    course_name = db.Column(db.String(255))
-    section_desc = db.Column(db.String(255))
-    materials = db.Column(db.String(255))
- 
-
-    def to_dict(self):
-        """
-        'to_dict' converts the object into a dictionary,
-        in which the keys correspond to database columns
-        """
-        columns = self.__mapper__.column_attrs.keys()
-        result = {}
-        for column in columns:
-            result[column] = getattr(self, column)
-        return result
-
-
 db.create_all()
 
 @app.route("/insert_class_list", methods=['POST'])

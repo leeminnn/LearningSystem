@@ -11,48 +11,49 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_PASSWORD: password
     ports:
-      - "3306:3306"
+      - "3305:3306"
     volumes:
       - ./Database:/docker-entrypoint-initdb.d
+# """
+#   section:
+#     build:
+#       context: ./Microservice/section
+#       dockerfile: Dockerfile
+#     image: leemin/section:latest
+#     restart: always
+#     environment:
+#       dbURL: db
+#       PYTHONUNBUFFERED: 1
+#     ports:
+#       - "5002:5002"
+#     links:
+#       - db:db
 
-  section:
-    build:
-      context: ./Microservice/section
-      dockerfile: Dockerfile
-    image: leemin/section:latest
-    restart: always
-    environment:
-      dbURL: db
-      PYTHONUNBUFFERED: 1
-    ports:
-      - "5002:5002"
-    links:
-      - db:db
+#   course:
+#     build:
+#       context: ./Microservice/course
+#       dockerfile: Dockerfile
+#     image: leemin/course:latest
+#     restart: always
+#     environment:
+#       dbURL: db
+#       PYTHONUNBUFFERED: 1
+#     ports:
+#       - "5000:5000"
+#     links:
+#       - db:db
 
-  course:
-    build:
-      context: ./Microservice/course
-      dockerfile: Dockerfile
-    image: leemin/course:latest
-    restart: always
-    environment:
-      dbURL: db
-      PYTHONUNBUFFERED: 1
-    ports:
-      - "5000:5000"
-    links:
-      - db:db
-
-  employee:
-    build:
-      context: ./Microservice/employee
-      dockerfile: Dockerfile
-    image: leemin/employee:latest
-    restart: always
-    environment:
-      dbURL: db
-      PYTHONUNBUFFERED: 1
-    ports:
-      - "5001:5001"
-    links:
-      - db:db
+#   employee:
+#     build:
+#       context: ./Microservice/employee
+#       dockerfile: Dockerfile
+#     image: leemin/employee:latest
+#     restart: always
+#     environment:
+#       dbURL: db
+#       PYTHONUNBUFFERED: 1
+#     ports:
+#       - "5001:5001"
+#     links:
+#       - db:db
+# """

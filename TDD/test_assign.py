@@ -29,8 +29,7 @@ class TestApp(flask_testing.TestCase):
             'progress' :assign.progress,
             'class_status' :assign.class_status,
             'ungraded_result' :assign.ungraded_result,
-            'graded_result' :assign.graded_result
-            
+            'graded_result' :assign.graded_result 
         }
     
         response = self.client.post("/insert_class_list",
