@@ -69,7 +69,12 @@ def create_class():
         """SELECT MAX(quiz_id) FROM section.quiz WHERE quiz_type='ungraded'""")
     result = cur.fetchall()
     conn.commit()
-    quiz_id = result[0]['MAX(quiz_id)'] + 1
+    print(result)
+    if result[0]['MAX(quiz_id)'] == None:
+        quiz_id = 1
+
+    else:
+        quiz_id = result[0]['MAX(quiz_id)'] + 1
     cur.execute("""INSERT INTO section.quiz(quiz_id, section_id, class_id, course_id, total_mark, quiz_type) VALUES (%s, %s, %s, %s, %s, %s)""",
                 (quiz_id, 1, class_id, course_id, 0, 'ungraded'))
     conn.commit()
