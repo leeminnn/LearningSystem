@@ -1,3 +1,7 @@
+### Test to check what courses learner can view (eligible, ongoing, completed) ###
+### Primary Author : Rusydiah ###
+
+
 import unittest
 from course_unit_class import Class, ClassList, Course
 from datetime import datetime
