@@ -11,7 +11,8 @@ import axios from 'axios';
 import '../Style.css';
 
 function Classes(props) {
-    const courseName = localStorage.getItem("course_name")
+    const [courseName, setCourseName] = useState(localStorage.getItem("course_name"))
+    const [preReq, setPreReq] = useState(localStorage.getItem("pre_req"))
     const courseID = localStorage.getItem("course_id")
     const [classList, setClassList] = useState([])
     let history = useHistory();
@@ -21,10 +22,10 @@ function Classes(props) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5000/all_classes',
+                url: 'http://localhost:5000/all_classes',
                 data: {course_id: courseID},
             })
-            if (onSubmit.status === 200){
+            if (onSubmit.status == 200){
                 setClassList(onSubmit.data)
             }
             return onSubmit.status
@@ -35,6 +36,7 @@ function Classes(props) {
     };
 
     useEffect(() => getClassList(), [])
+    console.log(classList)
     return (
         <div>
             <Nav/>
@@ -54,6 +56,7 @@ function Classes(props) {
                 <div className='course_list'>
                     <List sx={{ width: '50%', bgcolor: 'background.paper', margin: '0 5%'}}>
                         <ListItem alignItems="flex-start">
+                            {console.log(entry)}
                             <ListItemText
                             primary={"Class " + entry.class_id + " by " +  entry.emp_name}
                             secondary={
