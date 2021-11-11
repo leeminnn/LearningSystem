@@ -40,7 +40,7 @@ function CreateClass() {
 
 
     const getClassList =() => {
-        axios.get('http://18.235.179.159:5001/get_trainers')
+        axios.get('http://3.18.143.100:5001/get_trainers')
         .then((response) => {
             const myList = response.data
             let temp = []
@@ -72,7 +72,7 @@ function CreateClass() {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://18.235.179.159:5000/create_class',
+              url: 'http://3.18.143.100:5000/create_class',
               data: data,
             })
             if (onSubmit.status === 200){

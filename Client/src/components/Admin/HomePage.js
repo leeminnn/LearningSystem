@@ -15,7 +15,7 @@ function HomePage () {
     }
 
     const getClassList =() => {
-        axios.get('http://18.235.179.159:5000/all_courses')
+        axios.get('http://3.18.143.100:5000/all_courses')
         .then((response) => {
             const myList = response.data
             setClassList(myList)

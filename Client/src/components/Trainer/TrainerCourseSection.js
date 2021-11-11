@@ -31,7 +31,7 @@ function TrainerCourseSection({name, materials, show, classID, courseID}) {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://18.235.179.159:5002/upload_materials',
+              url: 'http://3.18.143.100:5002/upload_materials',
               data: formData,
             })
             if (onSubmit.status === 200){

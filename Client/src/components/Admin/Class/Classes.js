@@ -21,7 +21,7 @@ function Classes(props) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5000/all_classes',
+                url: 'http://3.18.143.100:5000/all_classes',
                 data: {course_id: courseID},
             })
             if (onSubmit.status === 200){

@@ -17,7 +17,7 @@ function CreateCourse() {
     let history = useHistory();
 
     const getCourseList =() => {
-        axios.get('http://18.235.179.159:5000/all_courses')
+        axios.get('http://3.18.143.100:5000/all_courses')
         .then((response) => {
             const myList = response.data
             let temp = []
@@ -51,7 +51,7 @@ function CreateCourse() {
           const onSubmit =
             await axios({
               method: 'post',
-              url: 'http://18.235.179.159:5000/add_course',
+              url: 'http://3.18.143.100:5000/add_course',
               data: data,
             })
             if (onSubmit.status === 200){

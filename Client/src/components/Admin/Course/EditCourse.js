@@ -42,7 +42,7 @@ function EditCourse(props) {
     }
 
     async function getCourseList() {
-        axios.get('http://18.235.179.159:5000/all_courses')
+        axios.get('http://3.18.143.100:5000/all_courses')
         .then((response) => {
             const myList = response.data
             let temp = []
@@ -58,7 +58,7 @@ function EditCourse(props) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5000/course_info',
+                url: 'http://3.18.143.100:5000/course_info',
                 data: {course_id : id},
               })
               if (onSubmit.status === 200){
@@ -81,7 +81,7 @@ function EditCourse(props) {
           const onSubmit =
             await axios({
               method: 'put',
-              url: 'http://18.235.179.159:5000/remove', 
+              url: 'http://3.18.143.100:5000/remove', 
               data: data,
             })
             if (onSubmit.status === 200 ) {
@@ -115,7 +115,7 @@ function EditCourse(props) {
           const onSubmit =
             await axios({
               method: 'put',
-              url: 'http://18.235.179.159:5000/update_course', 
+              url: 'http://3.18.143.100:5000/update_course', 
               data: data,
             })
             if (onSubmit.status === 200) {

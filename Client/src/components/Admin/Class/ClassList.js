@@ -60,7 +60,7 @@ function ClassList( {match} ) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5000/class_info',
+                url: 'http://3.18.143.100:5000/class_info',
                 data: { class_id: match.params.id},
             })
             if (onSubmit.status === 200){
@@ -81,7 +81,7 @@ function ClassList( {match} ) {
             const onSubmit =
               await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5000/pending_approval',
+                url: 'http://3.18.143.100:5000/pending_approval',
                 data: {class_id: match.params.id, course_id: courseID},
             })
             if (onSubmit.status === 200){
@@ -107,7 +107,7 @@ function ClassList( {match} ) {
             const onSubmit =
             await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5001/get_learners',
+                url: 'http://3.18.143.100:5001/get_learners',
                 data: data,
               })
               if (onSubmit.status === 200){
@@ -130,7 +130,7 @@ function ClassList( {match} ) {
             const onSubmit =
                await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5000/get_class_list',
+                url: 'http://3.18.143.100:5000/get_class_list',
                 data: {class_id: match.params.id},
             })
             if (onSubmit.status === 200){
@@ -190,7 +190,7 @@ function ClassList( {match} ) {
           const onSubmit =
             await axios({
               method: 'delete',
-              url: 'http://18.235.179.159:5000/withdraw_learners',
+              url: 'http://3.18.143.100:5000/withdraw_learners',
               data: data,
             })
             if (onSubmit.status === 200){
@@ -209,7 +209,7 @@ function ClassList( {match} ) {
           const onSubmit =
             await axios({
               method: 'delete',
-              url: 'http://18.235.179.159:5000/remove_pending',
+              url: 'http://3.18.143.100:5000/remove_pending',
               data: data,
             })
             if (onSubmit.status === 200){
@@ -229,7 +229,7 @@ function ClassList( {match} ) {
             const onSubmit =
                 await axios({
                 method: 'put',
-                url: 'http://18.235.179.159:5000/enroll_engineer',
+                url: 'http://3.18.143.100:5000/enroll_engineer',
                 data: data,
                 })
             }
@@ -242,7 +242,7 @@ function ClassList( {match} ) {
             const onSubmit =
                 await axios({
                 method: 'post',
-                url: 'http://18.235.179.159:5002/declare_ungraded_quiz',
+                url: 'http://3.18.143.100:5002/declare_ungraded_quiz',
                 data: info,
                 })
                 if (onSubmit.status === 200){
@@ -267,7 +267,7 @@ function ClassList( {match} ) {
                 const onSubmit =
                   await axios({
                     method: 'put',
-                    url: 'http://18.235.179.159:5000/assign_engineer',
+                    url: 'http://3.18.143.100:5000/assign_engineer',
                     data: data,
                   })
               }
@@ -280,7 +280,7 @@ function ClassList( {match} ) {
                 const onSubmit =
                   await axios({
                     method: 'post',
-                    url: 'http://18.235.179.159:5002/declare_ungraded_quiz',
+                    url: 'http://3.18.143.100:5002/declare_ungraded_quiz',
                     data: info,
                   })
                   if (onSubmit.status === 200){
