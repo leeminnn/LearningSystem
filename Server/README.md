@@ -1,13 +1,23 @@
-# How to run
+## How to run Front-end server locally
 
 ### Step 1
 
-### `docker-compose up -d`
+#### Open up a new terminal and go into Server directory
 
-This command installs a package and any packages that it depends on.
+### `cd Server`
 
 ### Step 2
 
-### `python pip install -r requirements.txt`
+#### Change all endpoints in Client folder from '3.143.98.183' to 'localhost'
 
-Install the needed packages with the specified version
+### Step 3
+
+#### Change the database host name to 'localhost' for all microservice python file
+
+<font size="2"> app.config['MYSQL_DATABASE_HOST'] = 'localhost' </font>
+
+### Step 4
+
+### `docker-compose up -d`
+
+This command will set up all docker comtainers which contains the database and microservices.
